@@ -69,7 +69,7 @@ export I3C_ROOT
 # 		  clk_gate \
 # 		  wdt
 # COMP_LIBS := $(foreach name, $(COMP_LIB_NAMES), $(CALIPTRA_SS)/src/integration/test_suites/libs/$(name))
-HEADER_FILES := $(CALIPTRA_RTL)/caliptra_reg.h \
+HEADER_FILES := $(CALIPTRA_SS)/src/mcu/rtl/caliptra_reg.h \
 		$(RISCV_HW_IF_DIR)/riscv_hw_if.h \
 		$(wildcard $(TEST_DIR)/*.h) \
 		$(SOC_IFC_DIR)/soc_ifc.h \
