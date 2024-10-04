@@ -85,17 +85,21 @@ void main() {
   // Run test for I3C Base registers ------------------------------------------
   printf("Test access to I3C Base registers\n");
   printf("---\n");
-  // Try to overwrite RO register, should do nothing
-  write_i3c_reg(I3C_REG_I3CBASE_HCI_VERSION, 0);
 
   // Read RO register
-  data = read_i3c_reg(I3C_REG_I3CBASE_HCI_VERSION);
+  data = read_i3c_reg(I3CCSR_I3CBASE_HCI_VERSION);
   printf("Check I3C HCI Version: ");
   error += check_and_report_value(data, HCI_VERSION);
 
   // Enable I3C Host Controller
   write_i3c_reg_field(I3C_REG_I3CBASE_HC_CONTROL,
     I3C_REG_I3CBASE_HC_CONTROL_BUS_ENABLE_LOW, I3C_REG_I3CBASE_HC_CONTROL_BUS_ENABLE_MASK, 1);
+
+  // Configure timing
+
+  // Set PID
+
+  // Set recovery ready
 
   // TODO below this vvvv
 
