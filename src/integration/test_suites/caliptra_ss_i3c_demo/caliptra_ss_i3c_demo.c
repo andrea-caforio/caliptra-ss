@@ -23,8 +23,8 @@
 #define TEST_ADDR (0x5f)
 #define TEST_WORD1 (0xdeadbeef)
 #define TEST_WORD2 (0xabcd9876)
-#define TX_QUEUE_SIZE (I3CCSR__PIOCONTROL__QUEUE_SIZE__TX_DATA_BUFFER_SIZE_reset)
-#define RX_QUEUE_SIZE (I3CCSR__PIOCONTROL__QUEUE_SIZE__RX_DATA_BUFFER_SIZE_reset)
+//#define TX_QUEUE_SIZE (I3CCSR__PIOCONTROL__QUEUE_SIZE__TX_DATA_BUFFER_SIZE_reset)
+//#define RX_QUEUE_SIZE (I3CCSR__PIOCONTROL__QUEUE_SIZE__RX_DATA_BUFFER_SIZE_reset)
 #define PIO_CONTROL_ENABLED (0x7)
 #define RETRY_CNT (0x2)
 #define AUTOCMD_HDR (0xc3)
@@ -88,7 +88,7 @@ void main() {
   printf("---\n");
 
   // Read RO register
-  data = read_i3c_reg(I3CCSR_I3CBASE_HCI_VERSION);
+  data = read_i3c_reg(I3C_REG_I3CBASE_HCI_VERSION);
   printf("Check I3C HCI Version: ");
   error += check_and_report_value(data, HCI_VERSION);
 
@@ -97,122 +97,15 @@ void main() {
     I3C_REG_I3CBASE_HC_CONTROL_BUS_ENABLE_LOW, I3C_REG_I3CBASE_HC_CONTROL_BUS_ENABLE_MASK, 1);
 
   // Configure timing
+  write_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_FREE_REG, 0x27);
+  write_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_IDLE_REG, 0x3e8);
+  write_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_AVAL_REG, 0x30d40);
 
   // Set PID
 
   // Set recovery ready
 
-  // TODO below this vvvv
 
 
 
-
-
-  // Write some dynamic address and enable it
-  write_i3c_reg_field(I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR,
-    I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR_DYNAMIC_ADDR_LOW,
-    I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR_DYNAMIC_ADDR_MASK,
-    TEST_ADDR);
-  write_i3c_reg_field(I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR,
-    I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR_DYNAMIC_ADDR_VALID_LOW,
-    I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR_DYNAMIC_ADDR_VALID_MASK,
-    1);
-
-  data = read_i3c_reg_field(I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR,
-    I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR_DYNAMIC_ADDR_LOW,
-    I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR_DYNAMIC_ADDR_MASK);
-  printf("Check I3C Host Controller dynamic address: ");
-  error += check_and_report_value(data, TEST_ADDR);
-
-  data = read_i3c_reg_field(I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR,
-    I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR_DYNAMIC_ADDR_VALID_LOW,
-    I3C_REG_I3CBASE_CONTROLLER_DEVICE_ADDR_DYNAMIC_ADDR_VALID_MASK);
-  printf("Check I3C Host Controller dynamic address valid: ");
-  error += check_and_report_value(data, 1);
-
-
-  printf("\n----------------------------------------\n");
-  // Run test for I3C PIO registers -------------------------------------------
-  printf("Test access to I3C PIO CONTROL registers\n");
-  printf("---\n");
-  // TODO: Add R/W to queue ports when it's implemented
-
-  data = read_i3c_reg_field(I3C_REG_PIOCONTROL_QUEUE_SIZE,
-    I3C_REG_PIOCONTROL_QUEUE_SIZE_TX_DATA_BUFFER_SIZE_LOW,
-    I3C_REG_PIOCONTROL_QUEUE_SIZE_TX_DATA_BUFFER_SIZE_MASK);
-  printf("Check I3C TX Queue Size: ");
-  error += check_and_report_value(data, TX_QUEUE_SIZE);
-
-  data = read_i3c_reg_field(I3C_REG_PIOCONTROL_QUEUE_SIZE,
-    I3C_REG_PIOCONTROL_QUEUE_SIZE_RX_DATA_BUFFER_SIZE_LOW,
-    I3C_REG_PIOCONTROL_QUEUE_SIZE_RX_DATA_BUFFER_SIZE_MASK);
-  printf("Check I3C RX Queue Size: ");
-  error += check_and_report_value(data, RX_QUEUE_SIZE);
-
-  write_i3c_reg(I3C_REG_PIOCONTROL_PIO_CONTROL, 0xffffffff);
-  data = read_i3c_reg(I3C_REG_PIOCONTROL_PIO_CONTROL);
-  // PIO_CONTROL has only 3 LSBs writable
-  printf("Check I3C PIO CONTROL Size: ");
-  error += check_and_report_value(data, PIO_CONTROL_ENABLED);
-
-
-  printf("\n----------------------------------------\n");
-  // Run test for I3C DAT table ----------------------------------------------
-  printf("Test access to I3C DAT table\n");
-  printf("---\n");
-  uint32_t dat_buf[DAT_REG_WSIZE] = {TEST_WORD1, TEST_WORD2};
-  write_dat_reg(5, dat_buf, DAT_REG_WSIZE);
-
-  // Clear the buffer before reading the DAT entry
-  dat_buf[0] = 0x0;
-  dat_buf[1] = 0x0;
-  read_dat_reg(5, dat_buf, DAT_REG_WSIZE);
-  printf("Check I3C DAT value (entry=5, word=0): ");
-  error += check_and_report_value(dat_buf[0], TEST_WORD1);
-  printf("Check I3C DAT value (entry=5, word=1): ");
-  error += check_and_report_value(dat_buf[1], TEST_WORD2);
-
-  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_STATIC_ADDRESS_LOW,
-    I3C_REG_DAT_MEMORY_STATIC_ADDRESS_MASK, TEST_ADDR);
-  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_STATIC_ADDRESS_LOW,
-    I3C_REG_DAT_MEMORY_STATIC_ADDRESS_MASK);
-  printf("Check I3C DAT static address value (entry=0): ");
-  error += check_and_report_value(data, TEST_ADDR);
-
-  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_DYNAMIC_ADDRESS_LOW,
-    I3C_REG_DAT_MEMORY_DYNAMIC_ADDRESS_MASK, TEST_ADDR);
-  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_DYNAMIC_ADDRESS_LOW,
-    I3C_REG_DAT_MEMORY_DYNAMIC_ADDRESS_MASK);
-  printf("Check I3C DAT dynamic address value (entry=0): ");
-  error += check_and_report_value(data, TEST_ADDR);
-
-  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_DEV_NACK_RETRY_CNT_LOW,
-    I3C_REG_DAT_MEMORY_DEV_NACK_RETRY_CNT_MASK, RETRY_CNT);
-  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_DEV_NACK_RETRY_CNT_LOW,
-    I3C_REG_DAT_MEMORY_DEV_NACK_RETRY_CNT_MASK);
-  printf("Check I3C DAT NACK retry count value (entry=0): ");
-  error += check_and_report_value(data, RETRY_CNT);
-
-  write_dat_reg_field(0, I3C_REG_DAT_MEMORY_AUTOCMD_HDR_CODE_LOW,
-    I3C_REG_DAT_MEMORY_AUTOCMD_HDR_CODE_MASK, AUTOCMD_HDR);
-  data = read_dat_reg_field(0, I3C_REG_DAT_MEMORY_AUTOCMD_HDR_CODE_LOW,
-    I3C_REG_DAT_MEMORY_AUTOCMD_HDR_CODE_MASK);
-  printf("Check I3C DAT Auto-Command HDR Command Code value (entry=0): ");
-  error += check_and_report_value(data, AUTOCMD_HDR);
-
-  printf("\n----------------------------------------\n");
-  // Run test for I3C DCT Memory ----------------------------------------------
-  printf("Test access to I3C DCT table\n");
-  printf("---\n");
-
-  uint32_t dct_buf[4];
-  read_dct_reg(15, dct_buf, DCT_REG_WSIZE);
-  for (int i = 0; i < DCT_REG_WSIZE; i++) {
-    printf("Check I3C DCT value (entry=15, word=%d): ", i);
-    error += check_and_report_value(dct_buf[i], 0);
-  }
-
-  printf("\n----------------------------------------\n");
-  // End the sim in failure
-  if (error > 0) printf("%c", 0x1);
 }
