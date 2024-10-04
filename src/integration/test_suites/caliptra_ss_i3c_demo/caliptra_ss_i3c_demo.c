@@ -15,6 +15,7 @@
 
 #include "printf.h"
 #include "riscv_hw_if.h"
+#include "caliptra_reg.h"
 #include "i3c_csr_accessors.h"
 #include "I3CCSR.h"
 
