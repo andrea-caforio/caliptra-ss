@@ -29,39 +29,27 @@
 #define RETRY_CNT (0x2)
 #define AUTOCMD_HDR (0xc3)
 
-volatile char *stdout = (char *)STDOUT;
+#ifdef CALIPTRA_SS_FPGA
+    #define RECOVERY_BASE_ADDR 0x82030000
+    #define RESET_GPIO_ADDR 0x82020030
+    #define MCU_RESET_VECTOR_ADDR 0x82020038
+    #define MCU_LMEM_BASE_ADDR 0x82010000
+    volatile char *stdout = (char *)82021008;
+#else
+    #define RECOVERY_BASE_ADDR 0x20004000
+    #define RESET_GPIO_ADDR 0x82020030
+    #define MCU_RESET_VECTOR_ADDR 0x82020038
+    #define MCU_LMEM_BASE_ADDR 0x80010000
+    volatile char *stdout = (char *)STDOUT;
+#endif
+
 volatile uint32_t intr_count = 0;
-volatile uint32_t rst_count __attribute__((section(".dccm.persistent"))) = 0;
 #ifdef CPT_VERBOSITY
 enum printf_verbosity verbosity_g = CPT_VERBOSITY;
 #else
 enum printf_verbosity verbosity_g = LOW;
 #endif
 
-volatile caliptra_intr_received_s cptra_intr_rcv = {
-    .doe_error        = 0,
-    .doe_notif        = 0,
-    .ecc_error        = 0,
-    .ecc_notif        = 0,
-    .hmac_error       = 0,
-    .hmac_notif       = 0,
-    .kv_error         = 0,
-    .kv_notif         = 0,
-    .sha512_error     = 0,
-    .sha512_notif     = 0,
-    .sha256_error     = 0,
-    .sha256_notif     = 0,
-    .qspi_error       = 0,
-    .qspi_notif       = 0,
-    .uart_error       = 0,
-    .uart_notif       = 0,
-    .i3c_error        = 0,
-    .i3c_notif        = 0,
-    .soc_ifc_error    = 0,
-    .soc_ifc_notif    = 0,
-    .sha512_acc_error = 0,
-    .sha512_acc_notif = 0,
-};
 
 int check_and_report_value(uint32_t value, uint32_t expected) {
   if (value == expected) {
@@ -78,6 +66,8 @@ void main() {
   int error;
   int data;
 
+  uint32_t* dbg_ptr = (uint32_t*)(MCU_LMEM_BASE_ADDR + 0x6000);
+
   printf("---------------------------\n");
   printf(" I3C CSR Smoke Test \n");
   printf("---------------------------\n");
@@ -92,20 +82,31 @@ void main() {
   printf("Check I3C HCI Version: ");
   error += check_and_report_value(data, HCI_VERSION);
 
-  // Enable I3C Host Controller
-  write_i3c_reg_field(I3C_REG_I3CBASE_HC_CONTROL,
-    I3C_REG_I3CBASE_HC_CONTROL_BUS_ENABLE_LOW, I3C_REG_I3CBASE_HC_CONTROL_BUS_ENABLE_MASK, 1);
-
   // Configure timing
+  printf("Configure HC Timing\n");
   write_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_FREE_REG, 0x27);
   write_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_IDLE_REG, 0x3e8);
   write_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_AVAL_REG, 0x30d40);
+  printf("T_FREE: 0x%x\n", read_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_FREE_REG) );
+  printf("T_IDLE: 0x%x\n", read_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_IDLE_REG) );
+  printf("T_AVAL: 0x%x\n", read_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_AVAL_REG) );
+//  *dbg_ptr = read_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_FREE_REG);
+//  dbg_ptr += 2;
+//  *dbg_ptr = read_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_IDLE_REG);
+//  dbg_ptr += 2;
+//  *dbg_ptr = read_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_AVAL_REG);
+//  dbg_ptr += 2;
+
+  // Enable I3C Host Controller
+  printf("Enable HC Control\n");
+  write_i3c_reg_field(I3C_REG_I3CBASE_HC_CONTROL,
+    I3C_REG_I3CBASE_HC_CONTROL_BUS_ENABLE_LOW, I3C_REG_I3CBASE_HC_CONTROL_BUS_ENABLE_MASK, 1);
 
   // Set PID
 
   // Set recovery ready
 
 
-
+  while(1);
 
 }
