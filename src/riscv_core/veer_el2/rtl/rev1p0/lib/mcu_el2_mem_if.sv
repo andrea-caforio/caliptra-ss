@@ -46,9 +46,9 @@ interface mcu_el2_mem_if #(
   logic [mcu_pt.DCCM_NUM_BANKS-1:0]                                       dccm_clken;
   logic [mcu_pt.DCCM_NUM_BANKS-1:0]                                       dccm_wren_bank;
   logic [mcu_pt.DCCM_NUM_BANKS-1:0][mcu_pt.DCCM_BITS-1:(mcu_pt.DCCM_BANK_BITS+2)] dccm_addr_bank;
-  logic [mcu_pt.DCCM_NUM_BANKS-1:0][              mcu_pt.DCCM_FDATA_WIDTH-1:0] dccm_wr_data_bank;
+  logic [mcu_pt.DCCM_NUM_BANKS-1:0][              mcu_pt.DCCM_DATA_WIDTH-1:0] dccm_wr_data_bank;
   logic [mcu_pt.DCCM_NUM_BANKS-1:0][                  DCCM_ECC_WIDTH-1:0] dccm_wr_ecc_bank;
-  logic [mcu_pt.DCCM_NUM_BANKS-1:0][              mcu_pt.DCCM_FDATA_WIDTH-1:0] dccm_bank_dout;
+  logic [mcu_pt.DCCM_NUM_BANKS-1:0][              mcu_pt.DCCM_DATA_WIDTH-1:0] dccm_bank_dout;
   logic [mcu_pt.DCCM_NUM_BANKS-1:0][                  DCCM_ECC_WIDTH-1:0] dccm_bank_ecc;
 
 
