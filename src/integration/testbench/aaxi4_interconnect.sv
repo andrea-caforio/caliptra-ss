@@ -216,19 +216,22 @@ initial begin
         slave[3].cfg_info.total_outstanding_depth = 4;
         slave[3].cfg_info.id_outstanding_depth = 4;
 
-        //-- Caliptra SRAM
+//        //-- Caliptra SRAM
+//        slave[4].cfg_info.passive_mode= 1; 
+//        slave[4].cfg_info.opt_awuser_enable = 0; // optional, axi4_interconn_routings.sv need it
+//        slave[4].cfg_info.opt_aruser_enable = 0; // optional, axi4_interconn_routings.sv need it
+//        slave[4].cfg_info.base_address[0] = 64'h1_2345_0000;
+//        slave[4].cfg_info.limit_address[0] = 64'h1_4001_FFFF;
+//        slave[4].cfg_info.data_bus_bytes = AAXI_DATA_WIDTH >> 4; // set DATA BUS WIDTH
+//        slave[4].cfg_info.total_outstanding_depth = 4;
+//        slave[4].cfg_info.id_outstanding_depth = 4;
+
+        //-- I3C
         slave[4].cfg_info.passive_mode= 1; 
         slave[4].cfg_info.opt_awuser_enable = 0; // optional, axi4_interconn_routings.sv need it
         slave[4].cfg_info.opt_aruser_enable = 0; // optional, axi4_interconn_routings.sv need it
-        slave[4].cfg_info.base_address[0] = 64'h1_2345_0000;
-        slave[4].cfg_info.limit_address[0] = 64'h1_4001_FFFF;
-        slave[4].cfg_info.data_bus_bytes = AAXI_DATA_WIDTH >> 4; // set DATA BUS WIDTH
-        slave[4].cfg_info.total_outstanding_depth = 4;
-        slave[4].cfg_info.id_outstanding_depth = 4;
-
-        //-- I3C
-        slave[5].cfg_info.base_address[0] = 64'h2000_4000;
-        slave[5].cfg_info.limit_address[0] = 64'h2000_4FFF;
+        slave[4].cfg_info.base_address[0] = 64'h2000_4000;
+        slave[4].cfg_info.limit_address[0] = 64'h2000_4FFF;
 
 //#1;
 //do not sure what feature of #1
@@ -305,14 +308,12 @@ initial begin
         slave[2].set("mem_uninitialized_value", 0);
         slave[3].set("mem_uninitialized_value", 0);
         slave[4].set("mem_uninitialized_value", 0);
-        slave[5].set("mem_uninitialized_value", 0);
 
         test.slave0= slave[0];
         test.slave1= slave[1];
         test.slave2= slave[2];
         test.slave3= slave[3];
         test.slave4= slave[4];
-        test.slave5= slave[5];
 
         for (int i=0; i< AAXI_INTC_SLAVE_CNT; i++)
             test.slv_bfms.push_back(slave[i]);
