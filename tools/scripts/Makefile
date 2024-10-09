@@ -72,9 +72,9 @@ export I3C_ROOT
 HEADER_FILES := $(CALIPTRA_SS)/src/mcu/rtl/caliptra_reg.h \
 		$(RISCV_HW_IF_DIR)/riscv_hw_if.h \
 		$(wildcard $(TEST_DIR)/*.h) \
+		$(I3C_ROOT)/sw/I3CCSR.h \
 		$(SOC_IFC_DIR)/soc_ifc.h \
 		$(PRINTF_DIR)/printf.h
-#		$(I3C_ROOT)/sw/I3CCSR.h \
 #		$(ISR_DIR)/riscv-csr.h \
 #		$(ISR_DIR)/riscv-interrupts.h \
 #		$(ISR_DIR)/veer-csr.h
