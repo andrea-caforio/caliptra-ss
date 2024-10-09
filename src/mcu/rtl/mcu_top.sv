@@ -15,6 +15,7 @@
 // limitations under the License.
 //********************************************************************************
 
+`include "i3c_defines.svh"
 module mcu_top
     import mcu_el2_pkg::*;
 #(
@@ -224,7 +225,7 @@ module mcu_top
     // AXI Write Channels
     input  logic                        i3c_axi_awvalid,
     output logic                        i3c_axi_awready,
-    input  logic [mcu_pt.DMA_BUS_TAG:0] i3c_axi_awid,
+    input  logic [`AXI_ID_WIDTH-1   :0] i3c_axi_awid,
     input  logic [                31:0] i3c_axi_awaddr,
     input  logic [                 2:0] i3c_axi_awsize,
     input  logic [                 2:0] i3c_axi_awprot,
@@ -234,19 +235,19 @@ module mcu_top
 
     input  logic        i3c_axi_wvalid,
     output logic        i3c_axi_wready,
-    input  logic [63:0] i3c_axi_wdata,
-    input  logic [ 7:0] i3c_axi_wstrb,
+    input  logic [31:0] i3c_axi_wdata,
+    input  logic [ 3:0] i3c_axi_wstrb,
     input  logic        i3c_axi_wlast,
 
     output logic                        i3c_axi_bvalid,
     input  logic                        i3c_axi_bready,
     output logic [                 1:0] i3c_axi_bresp,
-    output logic [mcu_pt.DMA_BUS_TAG:0] i3c_axi_bid,
+    output logic [`AXI_ID_WIDTH-1:0]    i3c_axi_bid,
 
     // AXI Read Channels
     input  logic                        i3c_axi_arvalid,
     output logic                        i3c_axi_arready,
-    input  logic [mcu_pt.DMA_BUS_TAG:0] i3c_axi_arid,
+    input  logic [`AXI_ID_WIDTH-1:0]    i3c_axi_arid,
     input  logic [                31:0] i3c_axi_araddr,
     input  logic [                 2:0] i3c_axi_arsize,
     input  logic [                 2:0] i3c_axi_arprot,
@@ -255,8 +256,8 @@ module mcu_top
 
     output logic                        i3c_axi_rvalid,
     input  logic                        i3c_axi_rready,
-    output logic [mcu_pt.DMA_BUS_TAG:0] i3c_axi_rid,
-    output logic [                63:0] i3c_axi_rdata,
+    output logic [`AXI_ID_WIDTH-1:0]    i3c_axi_rid,
+    output logic [                31:0] i3c_axi_rdata,
     output logic [                 1:0] i3c_axi_rresp,
     output logic                        i3c_axi_rlast,
 `endif
@@ -422,8 +423,8 @@ module mcu_top
     output logic sda_o,
     output logic sel_od_pp_o
 `else
-    inout  logic i3c_scl_io,
-    inout  logic i3c_sda_io
+    inout  wire i3c_scl_io,
+    inout  wire i3c_sda_io
 `endif
 );
 
@@ -480,13 +481,13 @@ module mcu_top
       .hrdata_o(i3c_hrdata),
 `elsif MCU_RV_BUILD_AXI4
      // AXI Read Channels
-      .araddr_i(i3c_axi_araddr),
+      .araddr_i(i3c_axi_araddr[`AXI_ADDR_WIDTH-1:0]),
       .arburst_i(i3c_axi_arburst),
       .arsize_i(i3c_axi_arsize),
       .arlen_i(i3c_axi_arlen),
-      .aruser_i(i3c_axi_aruser),
+      .aruser_i(0),
       .arid_i(i3c_axi_arid),
-      .arlock_i(i3c_axi_arlock),
+      .arlock_i(1'b0),
       .arvalid_i(i3c_axi_arvalid),
       .arready_o(i3c_axi_arready),
 
@@ -498,13 +499,13 @@ module mcu_top
       .rready_i(i3c_axi_rready),
 
       // AXI Write Channels
-      .awaddr_i(i3c_axi_awaddr),
+      .awaddr_i(i3c_axi_awaddr[`AXI_ADDR_WIDTH-1:0]),
       .awburst_i(i3c_axi_awburst),
       .awsize_i(i3c_axi_awsize),
       .awlen_i(i3c_axi_awlen),
-      .awuser_i(i3c_axi_awuser),
+      .awuser_i(0),
       .awid_i(i3c_axi_awid),
-      .awlock_i(i3c_axi_awlock),
+      .awlock_i(1'b0),
       .awvalid_i(i3c_axi_awvalid),
       .awready_o(i3c_axi_awready),
 
