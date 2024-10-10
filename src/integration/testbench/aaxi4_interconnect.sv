@@ -189,8 +189,8 @@ initial begin
         slave[0].cfg_info.limit_address[0] = 64'h8000_FFFF;
 
         //-- lmem/Mailbox
-        slave[1].cfg_info.base_address[0] = 64'h8001_0000;
-        slave[1].cfg_info.limit_address[0] = 64'h8001_FFFF;
+        slave[1].cfg_info.base_address[0] = 64'h9001_0000;
+        slave[1].cfg_info.limit_address[0] = 64'h9001_FFFF;
         slave[1].cfg_info.base_address[1]  = 64'hD058_0000;
         slave[1].cfg_info.limit_address[1] = 64'hD058_0000;
         // slave[1].cfg_info.fifo_address[1]  = 64'hE000_0000;
@@ -200,7 +200,7 @@ initial begin
         slave[2].cfg_info.base_address[0] = 64'h8002_0000;
         slave[2].cfg_info.limit_address[0] = 64'h8002_FFFF;
 
-        //-- Caliptra TB BFM (SOC BFM)
+        //-- Caliptra SoC IFC Sub
         slave[3].cfg_info.passive_mode= 1; 
         slave[3].cfg_info.opt_awuser_enable = 0; // optional, axi4_interconn_routings.sv need it
         slave[3].cfg_info.opt_aruser_enable = 0; // optional, axi4_interconn_routings.sv need it
@@ -232,6 +232,9 @@ initial begin
         slave[4].cfg_info.opt_aruser_enable = 0; // optional, axi4_interconn_routings.sv need it
         slave[4].cfg_info.base_address[0] = 64'h2000_4000;
         slave[4].cfg_info.limit_address[0] = 64'h2000_4FFF;
+        slave[4].cfg_info.data_bus_bytes = AAXI_DATA_WIDTH >> 3; // set DATA BUS WIDTH
+        slave[4].cfg_info.total_outstanding_depth = 4;
+        slave[4].cfg_info.id_outstanding_depth = 4;
 
 //#1;
 //do not sure what feature of #1

@@ -5,7 +5,7 @@ SECTIONS {
     . = 0x80000000;
   .text   : { *(.text*) }
  _end = .;
-  . = 0x80010000;
+  . = 0x90010000;
   .data  :  { *(.*data) *(.rodata*) *(.srodata*) *(.sbss) }
   .bss : { *(.bss) }
   STACK = ALIGN(16) + 0x1000;
