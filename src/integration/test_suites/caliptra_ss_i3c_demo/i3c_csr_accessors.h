@@ -147,7 +147,7 @@ void write_i3c_reg_field(uint32_t offset, uint8_t low_bit, uint32_t mask, uint32
     Returns a 32-bit value read from the register
 */
 uint32_t read_i3c_reg_field(uint32_t offset, uint8_t low_bit, uint32_t mask) {
-    return read_reg_field(CLP_I3C_REG_BASE_ADDR, offset, low_bit, mask);
+    return read_reg_field(CLP_I3C_REG_I3CBASE_START, offset, low_bit, mask);
 }
 
 

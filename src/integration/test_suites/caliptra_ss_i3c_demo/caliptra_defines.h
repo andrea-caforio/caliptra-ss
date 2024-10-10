@@ -1,0 +1,4 @@
+
+#ifndef CALIPTRA_DEFINES_H
+#define CALIPTRA_DEFINES_H
+#endif

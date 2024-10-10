@@ -36,14 +36,14 @@ _start:
         //  - DCCM       @ 0x5000_0000: no SE
         //  - PIC        @ 0x6000_0000:    SE
         //  - [UNMAPPED] @ 0x7000_0000:    SE
-        //  - imem       @ 0x8000_0000: no SE, +Cache FIXME
-        //  - lmem       @ 0x9000_0000:    SE
+        //  - imem/lmem  @ 0x8000_0000: no SE, +Cache FIXME
+        //  - [UNMAPPED] @ 0x9000_0000:    SE
         //  - ...
         //  - [UNMAPPED] @ 0xC000_0000:    SE
         //  - STDOUT     @ 0xD000_0000:    SE
         //  - [UNMAPPED] @ 0xE000_0000:    SE
         //  - [UNMAPPED] @ 0xF000_0000:    SE
-        li t0, 0xAAA9A2AA
+        li t0, 0xAAAAA2AA
         csrw mrac, t0
 
         la sp, STACK
