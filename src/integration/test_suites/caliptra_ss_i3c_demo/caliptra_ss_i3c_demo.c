@@ -153,6 +153,9 @@ void main() {
   data = read_i3c_reg(I3C_REG_I3CBASE_HCI_VERSION);
   printf("Check I3C HCI Version (0x%x): ", data);
   error += check_and_report_value(data, HCI_VERSION);
+  data = read_i3c_reg(CLP_I3C_REG_I3C_EC_SECFWRECOVERYIF_EXTCAP_HEADER - CLP_I3C_REG_BASE_ADDR);
+  printf("Check I3C EXTCAP (0x%x): ", data);
+  error += check_and_report_value(data, 0x20c0);
   putchar('\n');
 
   configure_i3c_timing();
