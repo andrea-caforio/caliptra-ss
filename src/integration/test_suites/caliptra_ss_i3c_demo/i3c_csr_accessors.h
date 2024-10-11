@@ -3,7 +3,7 @@
 #ifndef I3C_CSR_ACCESSORS_H
 #define I3C_CSR_ACCESSORS_H
 
-#include "caliptra_reg.h"
+#include "soc_address_map.h"
 #include "riscv_hw_if.h"
 
 #define DCT_MEM_WIDTH 128
@@ -104,51 +104,51 @@ uint32_t read_reg_field(uint32_t address, uint32_t offset, uint8_t low_bit, uint
 }
 
 
-/*  Writes a value to the I3C register
-
-    Arguments:
-    * offset - relative address of the register in the I3C address space
-    * data - 32-bit word to write into the register
-*/
-void write_i3c_reg(uint32_t offset, uint32_t data) {
-    write_reg(CLP_I3C_REG_I3CBASE_START, offset, data);
-};
-
-/*  Reads a value from the I3C register
-
-    Arguments:
-    * offset - relative address of the register in the I3C address space
-
-    Returns a 32-bit value read from the register
-*/
-uint32_t read_i3c_reg(uint32_t offset) {
-    return read_reg(CLP_I3C_REG_I3CBASE_START, offset);
-}
-
-/*  Writes a value to the I3C register field
-
-    Arguments:
-    * offset - relative address of the register in the I3C address space
-    * low_bit - index of the lowest bit of the accessed field
-    * mask - mask of the register field in the register (should be contiguous)
-    * data - 32-bit word to write into the register
-*/
-void write_i3c_reg_field(uint32_t offset, uint8_t low_bit, uint32_t mask, uint32_t data) {
-    write_reg_field(CLP_I3C_REG_I3CBASE_START, offset, low_bit, mask, data);
-}
-
-/*  Reads a value from the I3C register field
-
-    Arguments:
-    * offset - relative address of the register in the I3C address space
-    * low_bit - index of the lowest bit of the accessed field
-    * mask - mask of the register field in the register (should be contiguous)
-
-    Returns a 32-bit value read from the register
-*/
-uint32_t read_i3c_reg_field(uint32_t offset, uint8_t low_bit, uint32_t mask) {
-    return read_reg_field(CLP_I3C_REG_I3CBASE_START, offset, low_bit, mask);
-}
+///*  Writes a value to the I3C register
+//
+//    Arguments:
+//    * offset - relative address of the register in the I3C address space
+//    * data - 32-bit word to write into the register
+//*/
+//void write_i3c_reg(uint32_t offset, uint32_t data) {
+//    write_reg(SOC_I3CCSR_BASE_ADDR, offset, data);
+//};
+//
+///*  Reads a value from the I3C register
+//
+//    Arguments:
+//    * offset - relative address of the register in the I3C address space
+//
+//    Returns a 32-bit value read from the register
+//*/
+//uint32_t read_i3c_reg(uint32_t offset) {
+//    return read_reg(SOC_I3CCSR_BASE_ADDR, offset);
+//}
+//
+///*  Writes a value to the I3C register field
+//
+//    Arguments:
+//    * offset - relative address of the register in the I3C address space
+//    * low_bit - index of the lowest bit of the accessed field
+//    * mask - mask of the register field in the register (should be contiguous)
+//    * data - 32-bit word to write into the register
+//*/
+//void write_i3c_reg_field(uint32_t offset, uint8_t low_bit, uint32_t mask, uint32_t data) {
+//    write_reg_field(SOC_I3CCSR_BASE_ADDR, offset, low_bit, mask, data);
+//}
+//
+///*  Reads a value from the I3C register field
+//
+//    Arguments:
+//    * offset - relative address of the register in the I3C address space
+//    * low_bit - index of the lowest bit of the accessed field
+//    * mask - mask of the register field in the register (should be contiguous)
+//
+//    Returns a 32-bit value read from the register
+//*/
+//uint32_t read_i3c_reg_field(uint32_t offset, uint8_t low_bit, uint32_t mask) {
+//    return read_reg_field(SOC_I3CCSR_BASE_ADDR, offset, low_bit, mask);
+//}
 
 
 /*  Writes a value to the I3C DAT table entry
@@ -161,8 +161,8 @@ void write_dat_reg(uint8_t index, uint32_t *buf, uint32_t size) {
     if (!is_buf_valid(buf, size, DAT_REG_WSIZE))
         printf("%c", 0x1);
 
-    write_reg(I3C_REG_DAT_MEMORY, index * DAT_MEM_WIDTH_BYTE, buf[0]);
-    write_reg(I3C_REG_DAT_MEMORY, index * DAT_MEM_WIDTH_BYTE + 4, buf[1]);
+    write_reg(SOC_I3CCSR_DAT_DAT_MEMORY_0, index * DAT_MEM_WIDTH_BYTE, buf[0]);
+    write_reg(SOC_I3CCSR_DAT_DAT_MEMORY_0, index * DAT_MEM_WIDTH_BYTE + 4, buf[1]);
 }
 
 /*  Reads a value from the I3C DAT table entry
@@ -181,7 +181,7 @@ void read_dat_reg(uint8_t index, uint32_t *buf, uint32_t size) {
         printf("%c", 0x1);
 
     for (int i = 0; i < DAT_REG_WSIZE; i++) {
-        buf[i] = read_reg(I3C_REG_DAT_MEMORY, index * DAT_MEM_WIDTH_BYTE + i * 4);
+        buf[i] = read_reg(SOC_I3CCSR_DAT_DAT_MEMORY_0, index * DAT_MEM_WIDTH_BYTE + i * 4);
     }
 }
 
@@ -198,7 +198,7 @@ void read_dat_reg(uint8_t index, uint32_t *buf, uint32_t size) {
 void write_dat_reg_field(uint8_t index, uint8_t low_bit, uint32_t mask, uint32_t data) {
     uint32_t w_index = low_bit / REG_WIDTH * ADDR_INCR;
     uint8_t w_low_bit = low_bit % REG_WIDTH;
-    write_reg_field(I3C_REG_DAT_MEMORY, (index * DAT_MEM_WIDTH_BYTE) + w_index, w_low_bit, mask, data);
+    write_reg_field(SOC_I3CCSR_DAT_DAT_MEMORY_0, (index * DAT_MEM_WIDTH_BYTE) + w_index, w_low_bit, mask, data);
 }
 
 /*  Reads a value from the I3C DAT table entry field
@@ -215,7 +215,7 @@ void write_dat_reg_field(uint8_t index, uint8_t low_bit, uint32_t mask, uint32_t
 uint32_t read_dat_reg_field(uint8_t index, uint8_t low_bit, uint32_t mask) {
     uint32_t w_index = low_bit / REG_WIDTH * ADDR_INCR;
     uint8_t w_low_bit = low_bit % REG_WIDTH;
-    return read_reg_field(I3C_REG_DAT_MEMORY, (index * DAT_MEM_WIDTH_BYTE) + w_index, w_low_bit, mask);
+    return read_reg_field(SOC_I3CCSR_DAT_DAT_MEMORY_0, (index * DAT_MEM_WIDTH_BYTE) + w_index, w_low_bit, mask);
 }
 
 
@@ -235,7 +235,7 @@ void read_dct_reg(uint8_t index, uint32_t *buf, uint32_t size) {
         printf("%c", 0x1);
 
     for (int i = 0; i < DCT_REG_WSIZE; i++) {
-        buf[i] = read_reg(I3C_REG_DCT_MEMORY, index * DCT_MEM_WIDTH_BYTE + i * 4);
+        buf[i] = read_reg(SOC_I3CCSR_DCT_DCT_MEMORY_0, index * DCT_MEM_WIDTH_BYTE + i * 4);
     }
 }
 
@@ -253,7 +253,7 @@ void read_dct_reg(uint8_t index, uint32_t *buf, uint32_t size) {
 uint32_t read_dct_reg_field(uint8_t index, uint8_t low_bit, uint32_t mask) {
     uint32_t w_index = low_bit / REG_WIDTH * ADDR_INCR;
     uint8_t w_low_bit = low_bit % REG_WIDTH;
-    return read_reg_field(I3C_REG_DCT_MEMORY, (index * DCT_MEM_WIDTH_BYTE), low_bit, mask);
+    return read_reg_field(SOC_I3CCSR_DCT_DCT_MEMORY_0, (index * DCT_MEM_WIDTH_BYTE), low_bit, mask);
 }
 
 #endif

@@ -15,7 +15,7 @@
 
 #include "printf.h"
 #include "riscv_hw_if.h"
-#include "caliptra_reg.h"
+#include "soc_address_map.h"
 #include "soc_ifc.h"
 #include "i3c_csr_accessors.h"
 #include "I3CCSR.h"
@@ -49,14 +49,12 @@
     #define RESET_GPIO_ADDR 0x82020030
     #define MCU_RESET_VECTOR_ADDR 0x82020038
     #define MCU_LMEM_BASE_ADDR 0x82010000
-    #define CPTRA_SOC_IFC_REG_BASE_ADDR /*FIXME*/
     volatile char *stdout = (char *)0x82021008;
 #else
     #define RECOVERY_BASE_ADDR 0x20004000
     #define RESET_GPIO_ADDR 0x82020030
     #define MCU_RESET_VECTOR_ADDR 0x82020038
     #define MCU_LMEM_BASE_ADDR 0x90010000
-    #define CPTRA_SOC_IFC_REG_BASE_ADDR CLP_SOC_IFC_REG_BASE_ADDR
     #define MCU_RECOVERY_IMAGE_READY_POLL_ADDR 0x9001FFFF
     volatile char *stdout = (char *)0xd0580000;
 #endif
@@ -86,24 +84,24 @@ void cptra_bringup (void) {
     // Fuse and Boot Bringup
     //
     // Wait for ready_for_fuses
-    while(!(lsu_read_32(CPTRA_SOC_IFC_REG_BASE_ADDR + SOC_IFC_REG_CPTRA_FLOW_STATUS) & SOC_IFC_REG_CPTRA_FLOW_STATUS_READY_FOR_FUSES_MASK));
+    while(!(lsu_read_32(SOC_SOC_IFC_REG_CPTRA_FLOW_STATUS) & SOC_IFC_REG_CPTRA_FLOW_STATUS_READY_FOR_FUSES_MASK));
 
     // Initialize fuses
-    lsu_write_32(CPTRA_SOC_IFC_REG_BASE_ADDR + SOC_IFC_REG_CPTRA_FUSE_WR_DONE, SOC_IFC_REG_CPTRA_FUSE_WR_DONE_DONE_MASK);
+    lsu_write_32(SOC_SOC_IFC_REG_CPTRA_FUSE_WR_DONE, SOC_IFC_REG_CPTRA_FUSE_WR_DONE_DONE_MASK);
     VPRINTF(LOW, "MCU: Set fuse wr done\n");
 
     // Wait for Boot FSM to stall (on breakpoint) or finish bootup
-    boot_fsm_ps = (lsu_read_32(CPTRA_SOC_IFC_REG_BASE_ADDR + SOC_IFC_REG_CPTRA_FLOW_STATUS) & SOC_IFC_REG_CPTRA_FLOW_STATUS_BOOT_FSM_PS_MASK) >> SOC_IFC_REG_CPTRA_FLOW_STATUS_BOOT_FSM_PS_LOW;
+    boot_fsm_ps = (lsu_read_32(SOC_SOC_IFC_REG_CPTRA_FLOW_STATUS) & SOC_IFC_REG_CPTRA_FLOW_STATUS_BOOT_FSM_PS_MASK) >> SOC_IFC_REG_CPTRA_FLOW_STATUS_BOOT_FSM_PS_LOW;
     while(boot_fsm_ps != BOOT_DONE && boot_fsm_ps != BOOT_WAIT) {
         for (uint8_t ii = 0; ii < 16; ii++) {
             __asm__ volatile ("nop"); // Sleep loop as "nop"
         }
-        boot_fsm_ps = (lsu_read_32(CPTRA_SOC_IFC_REG_BASE_ADDR + SOC_IFC_REG_CPTRA_FLOW_STATUS) & SOC_IFC_REG_CPTRA_FLOW_STATUS_BOOT_FSM_PS_MASK) >> SOC_IFC_REG_CPTRA_FLOW_STATUS_BOOT_FSM_PS_LOW;
+        boot_fsm_ps = (lsu_read_32(SOC_SOC_IFC_REG_CPTRA_FLOW_STATUS) & SOC_IFC_REG_CPTRA_FLOW_STATUS_BOOT_FSM_PS_MASK) >> SOC_IFC_REG_CPTRA_FLOW_STATUS_BOOT_FSM_PS_LOW;
     }
 
     // Advance from breakpoint, if set
     if (boot_fsm_ps == BOOT_WAIT) {
-        lsu_write_32(CPTRA_SOC_IFC_REG_BASE_ADDR + SOC_IFC_REG_CPTRA_BOOTFSM_GO, SOC_IFC_REG_CPTRA_BOOTFSM_GO_GO_MASK);
+        lsu_write_32(SOC_SOC_IFC_REG_CPTRA_BOOTFSM_GO, SOC_IFC_REG_CPTRA_BOOTFSM_GO_GO_MASK);
     }
     VPRINTF(LOW, "MCU: Set BootFSM GO\n");
 
@@ -122,12 +120,12 @@ int check_and_report_value(uint32_t value, uint32_t expected) {
 void configure_i3c_timing() {
   // Configure timing
   printf("MCU: Configure HC Timing\n");
-  write_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_FREE_REG, 0x27);
-  write_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_IDLE_REG, 0x3e8);
-  write_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_AVAL_REG, 0x30d40);
-  printf("T_FREE: 0x%x\n", read_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_FREE_REG) );
-  printf("T_IDLE: 0x%x\n", read_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_IDLE_REG) );
-  printf("T_AVAL: 0x%x\n", read_i3c_reg(I3C_REG_I3C_EC_SOCMGMTIF_T_AVAL_REG) );
+  lsu_write_32(SOC_I3CCSR_I3C_EC_SOCMGMTIF_T_FREE_REG, 0x27);
+  lsu_write_32(SOC_I3CCSR_I3C_EC_SOCMGMTIF_T_IDLE_REG, 0x3e8);
+  lsu_write_32(SOC_I3CCSR_I3C_EC_SOCMGMTIF_T_AVAL_REG, 0x30d40);
+  printf("T_FREE: 0x%x\n", lsu_read_32(SOC_I3CCSR_I3C_EC_SOCMGMTIF_T_FREE_REG) );
+  printf("T_IDLE: 0x%x\n", lsu_read_32(SOC_I3CCSR_I3C_EC_SOCMGMTIF_T_IDLE_REG) );
+  printf("T_AVAL: 0x%x\n", lsu_read_32(SOC_I3CCSR_I3C_EC_SOCMGMTIF_T_AVAL_REG) );
   putchar('\n');
 }
 
@@ -148,13 +146,13 @@ void poll_for_recovery_image_ready(){
   uint8_t flag = 1;
 
   // Poll for Recovery Image Ready
-  data = read_i3c_reg(MCU_RECOVERY_IMAGE_READY_POLL_ADDR);
+  data = lsu_read_32(MCU_RECOVERY_IMAGE_READY_POLL_ADDR);
   while (data != 0x1) {
     if (flag) {
       printf("  * MCU: Polling for recovery image ready...\n");
       flag = 0;
     }
-    data = read_i3c_reg(MCU_RECOVERY_IMAGE_READY_POLL_ADDR);
+    data = lsu_read_32(MCU_RECOVERY_IMAGE_READY_POLL_ADDR);
   }
   flag = 1; // reset flag
   printf("  * MCU: Recovery image ready\n\n");
@@ -165,10 +163,10 @@ void send_payload(){
   
   //-- Writing dummy payload - FIXME
   // - BMC programs INDIRECT_FIFO_CTRL with Image size (multiple of 4B) & reset FIFO. - I3C Write
-  write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0x10101010);
-  write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0xFFFFFFFF);
-  write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0x11111111);
-  write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0x22222222);
+  lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0x10101010);
+  lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0xFFFFFFFF);
+  lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0x11111111);
+  lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0x22222222);
 
 }
 
@@ -189,10 +187,10 @@ void main() {
   printf("MCU: Test access to I3C Base registers\n");
 
   // Read RO register
-  data = read_i3c_reg(I3C_REG_I3CBASE_HCI_VERSION);
+  data = lsu_read_32(SOC_I3CCSR_I3CBASE_HCI_VERSION);
   printf("Check I3C HCI Version (0x%x): ", data);
   error += check_and_report_value(data, HCI_VERSION);
-  data = read_i3c_reg(CLP_I3C_REG_I3C_EC_SECFWRECOVERYIF_EXTCAP_HEADER - CLP_I3C_REG_BASE_ADDR);
+  data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_EXTCAP_HEADER);
   printf("Check I3C EXTCAP (0x%x): ", data);
   error += check_and_report_value(data, 0x20c0);
   putchar('\n');
@@ -207,13 +205,13 @@ void main() {
 
   //     // -( Start of recovery)  : Wait in loop for Byte 0 to be written with 0x3 in DEVICE_STATUS register - I3C Read
   printf("  * MCU: Recovery mode enabled\n\n");    
-  data = read_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_DEVICE_STATUS_0);
+  data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_DEVICE_STATUS_0);
   while((data & 0x3) != 0x3) {
     if(flag) {
       printf("  * MCU: Polling for recovery mode...\n");
       flag = 0;
     }
-    data = read_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_DEVICE_STATUS_0);
+    data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_DEVICE_STATUS_0);
     caliptra_sleep(32);
   }
   flag = 1; // reset flag
@@ -221,9 +219,9 @@ void main() {
 
       // - BMC programs INDIRECT_FIFO_CTRL with Image size (multiple of 4B) & reset FIFO. - I3C Write
       data  = 0x00040000;    //- Image Size (4 Data words, Resetting the fifo, CMS=0)
-      write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_CTRL_0, data);
+      lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_CTRL_0, data);
       data  = 0x0;          //- Image length for upper DWORD
-      write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_CTRL_1, data);
+      lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_CTRL_1, data);
       printf("  * MCU: FIFO control written... \n");
       
       // - BMC Starts sending payloads in chunks of 256B (image payload) + 4B (header) - I3C Write  
@@ -232,20 +230,20 @@ void main() {
       // - If image is greater than 256B, number of I3C writes will be (Image size / 256B) + (Image size % 256B?== 1? 1:0) 
       // - BMC writes to RECOVERY_CTRL register to activate the image. - I3C Write byte 2 with 0xf
       data = 0x0f0000; //-- Activating Image
-      write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_RECOVERY_CTRL, data);
+      lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_RECOVERY_CTRL, data);
 
       // - BMC reads from RECOVERY_CTRL register to confirm, image activation was read. - I3C read (optional) - (end of recovery)
-      data = read_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_RECOVERY_CTRL);
+      data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_RECOVERY_CTRL);
       while(data != 0x0) {
         if(flag) {
           printf("  * MCU: Polling for deassertion of recovery image activation...\n");
           flag = 0;
         }
-        data = read_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_RECOVERY_CTRL);
+        data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_RECOVERY_CTRL);
         caliptra_sleep(32);
       }
       // - Update with RECOVERY_STATUS by incrementing image index. - I3C Write
-      write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_RECOVERY_STATUS, 0x1);
+      lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_RECOVERY_STATUS, 0x1);
 
   //-- dummy steps end
 
