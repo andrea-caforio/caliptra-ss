@@ -55,7 +55,7 @@
     #define RESET_GPIO_ADDR 0x82020030
     #define MCU_RESET_VECTOR_ADDR 0x82020038
     #define MCU_LMEM_BASE_ADDR 0x90010000
-    #define MCU_RECOVERY_IMAGE_READY_POLL_ADDR 0x9001FFFF
+    #define MCU_RECOVERY_IMAGE_READY_POLL_ADDR 0x9001A000
     volatile char *stdout = (char *)0xd0580000;
 #endif
 
@@ -147,7 +147,7 @@ void poll_for_recovery_image_ready(){
 
   // Poll for Recovery Image Ready
   data = lsu_read_32(MCU_RECOVERY_IMAGE_READY_POLL_ADDR);
-  while (data != 0x1) {
+  while (data != 0x00000001) {
     if (flag) {
       printf("  * MCU: Polling for recovery image ready...\n");
       flag = 0;
@@ -163,10 +163,10 @@ void send_payload(){
   
   //-- Writing dummy payload - FIXME
   // - BMC programs INDIRECT_FIFO_CTRL with Image size (multiple of 4B) & reset FIFO. - I3C Write
-  lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0x10101010);
-  lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0xFFFFFFFF);
-  lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0x11111111);
-  lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0x22222222);
+  lsu_write_32(SOC_I3CCSR_PIOCONTROL_TX_DATA_PORT, 0x10101010);
+  lsu_write_32(SOC_I3CCSR_PIOCONTROL_TX_DATA_PORT, 0xFFFFFFFF);
+  lsu_write_32(SOC_I3CCSR_PIOCONTROL_TX_DATA_PORT, 0x11111111);
+  lsu_write_32(SOC_I3CCSR_PIOCONTROL_TX_DATA_PORT, 0x22222222);
 
 }
 
@@ -203,28 +203,42 @@ void main() {
   //-- dummy BMC steps start 
   //-- from MCU to I3C -- FIXME
 
-  //     // -( Start of recovery)  : Wait in loop for Byte 0 to be written with 0x3 in DEVICE_STATUS register - I3C Read
-  data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_DEVICE_STATUS_0);
-  while((data & 0x3) != 0x3) {
-    if(flag) {
-      printf("  * MCU: Polling for recovery mode...\n");
-      flag = 0;
-    }
-    data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_DEVICE_STATUS_0);
-    caliptra_sleep(1);
-  }
-  flag = 1; // reset flag
-  printf("  * MCU: Recovery mode enabled\n\n");
+      //     // -( Start of recovery)  : Wait in loop for Byte 0 to be written with 0x3 in DEVICE_STATUS register - I3C Read
+      data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_DEVICE_STATUS_0);
+      while((data & 0x3) != 0x3) {
+        if(flag) {
+          printf("  * MCU: Polling for recovery mode...\n");
+          flag = 0;
+        }
+        data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_DEVICE_STATUS_0);
+        caliptra_sleep(1);
+      }
+      flag = 1; // reset flag
+      printf("  * MCU: Recovery mode enabled\n\n");
 
       // - BMC programs INDIRECT_FIFO_CTRL with Image size (multiple of 4B) & reset FIFO. - I3C Write
-      data  = 0x00040000;    //- Image Size (4 Data words, Resetting the fifo, CMS=0)
+      data  = 0x00100000;    //- Image Size (4 Data words, Resetting the fifo, CMS=0)
       lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_CTRL_0, data);
       data  = 0x0;          //- Image length for upper DWORD
       lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_CTRL_1, data);
       printf("  * MCU: FIFO control written... \n");
       
-      // - BMC Starts sending payloads in chunks of 256B (image payload) + 4B (header) - I3C Write  
       send_payload();
+      // - BMC Starts sending payloads in chunks of 256B (image payload) + 4B (header) - I3C Write  
+      for(uint32_t send_count = 0; send_count < 3; send_count ++){
+        data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_STATUS_0);
+
+        while (data != 0x1) {
+          if(flag) {
+            printf("  * MCU: Polling for data read complete...\n");
+            flag = 0;
+          }
+          caliptra_sleep(1);
+          data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_STATUS_0);
+        }
+        printf("  * MCU: Sending data .. %0d", send_count);
+        send_payload();
+      }
 
       // - If image is greater than 256B, number of I3C writes will be (Image size / 256B) + (Image size % 256B?== 1? 1:0) 
       // - BMC writes to RECOVERY_CTRL register to activate the image. - I3C Write byte 2 with 0xf
@@ -250,7 +264,7 @@ void main() {
   // Poll for Recovery Image Ready
   poll_for_recovery_image_ready();
 
-  
+ 
 
   while(1);
 

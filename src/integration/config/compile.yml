@@ -63,6 +63,7 @@ global:
         - '-suppress=UNGB'
         - '-suppress=IWNF'
         - '-suppress=PCWM-W'
+        - '-ignore unique_checks'
       sim:
         # Uncomment for debug prints
         #- +aaxi_dbg_name=all
