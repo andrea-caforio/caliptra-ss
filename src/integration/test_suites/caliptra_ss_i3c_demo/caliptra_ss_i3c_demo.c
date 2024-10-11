@@ -204,7 +204,6 @@ void main() {
   //-- from MCU to I3C -- FIXME
 
   //     // -( Start of recovery)  : Wait in loop for Byte 0 to be written with 0x3 in DEVICE_STATUS register - I3C Read
-  printf("  * MCU: Recovery mode enabled\n\n");    
   data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_DEVICE_STATUS_0);
   while((data & 0x3) != 0x3) {
     if(flag) {
@@ -212,7 +211,7 @@ void main() {
       flag = 0;
     }
     data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_DEVICE_STATUS_0);
-    caliptra_sleep(32);
+    caliptra_sleep(1);
   }
   flag = 1; // reset flag
   printf("  * MCU: Recovery mode enabled\n\n");
@@ -231,6 +230,7 @@ void main() {
       // - BMC writes to RECOVERY_CTRL register to activate the image. - I3C Write byte 2 with 0xf
       data = 0x0f0000; //-- Activating Image
       lsu_write_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_RECOVERY_CTRL, data);
+      printf("  * MCU: Image activated... \n");
 
       // - BMC reads from RECOVERY_CTRL register to confirm, image activation was read. - I3C read (optional) - (end of recovery)
       data = lsu_read_32(SOC_I3CCSR_I3C_EC_SECFWRECOVERYIF_RECOVERY_CTRL);
