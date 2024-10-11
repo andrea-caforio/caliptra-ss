@@ -57,6 +57,7 @@
     #define MCU_RESET_VECTOR_ADDR 0x82020038
     #define MCU_LMEM_BASE_ADDR 0x90010000
     #define CPTRA_SOC_IFC_REG_BASE_ADDR CLP_SOC_IFC_REG_BASE_ADDR
+    #define MCU_RECOVERY_IMAGE_READY_POLL_ADDR 0x9001FFFF
     volatile char *stdout = (char *)0xd0580000;
 #endif
 
@@ -66,6 +67,13 @@ enum printf_verbosity verbosity_g = CPT_VERBOSITY;
 #else
 enum printf_verbosity verbosity_g = LOW;
 #endif
+
+
+void caliptra_sleep(int cycles) {
+      for (uint16_t slp = 0; slp < cycles; slp++) {
+        __asm__ volatile ("nop");
+    }
+}
 
 void cptra_bringup (void) {
     int argc=0;
@@ -135,9 +143,40 @@ void enable_i3c_target() {
     return;
 }
 
+void poll_for_recovery_image_ready(){
+  uint32_t data;
+  uint8_t flag = 1;
+
+  // Poll for Recovery Image Ready
+  data = read_i3c_reg(MCU_RECOVERY_IMAGE_READY_POLL_ADDR);
+  while (data != 0x1) {
+    if (flag) {
+      printf("  * MCU: Polling for recovery image ready...\n");
+      flag = 0;
+    }
+    data = read_i3c_reg(MCU_RECOVERY_IMAGE_READY_POLL_ADDR);
+  }
+  flag = 1; // reset flag
+  printf("  * MCU: Recovery image ready\n\n");
+}
+
+void send_payload(){
+  printf("  * MCU: Sending payload...\n");
+  
+  //-- Writing dummy payload - FIXME
+  // - BMC programs INDIRECT_FIFO_CTRL with Image size (multiple of 4B) & reset FIFO. - I3C Write
+  write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0x10101010);
+  write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0xFFFFFFFF);
+  write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0x11111111);
+  write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_DATA, 0x22222222);
+
+}
+
 void main() {
   int error;
-  int data;
+  uint32_t data;
+  int flag = 1;
+  
 
 //  uint32_t* dbg_ptr = (uint32_t*)(MCU_LMEM_BASE_ADDR + 0x6000);
 
@@ -158,10 +197,62 @@ void main() {
   error += check_and_report_value(data, 0x20c0);
   putchar('\n');
 
+  printf("  * MCU: configuring timing \n\n");
   configure_i3c_timing();
   enable_i3c_target();
-
   cptra_bringup();
+
+  //-- dummy BMC steps start 
+  //-- from MCU to I3C -- FIXME
+
+  //     // -( Start of recovery)  : Wait in loop for Byte 0 to be written with 0x3 in DEVICE_STATUS register - I3C Read
+  printf("  * MCU: Recovery mode enabled\n\n");    
+  data = read_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_DEVICE_STATUS_0);
+  while((data & 0x3) != 0x3) {
+    if(flag) {
+      printf("  * MCU: Polling for recovery mode...\n");
+      flag = 0;
+    }
+    data = read_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_DEVICE_STATUS_0);
+    caliptra_sleep(32);
+  }
+  flag = 1; // reset flag
+  printf("  * MCU: Recovery mode enabled\n\n");
+
+      // - BMC programs INDIRECT_FIFO_CTRL with Image size (multiple of 4B) & reset FIFO. - I3C Write
+      data  = 0x00040000;    //- Image Size (4 Data words, Resetting the fifo, CMS=0)
+      write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_CTRL_0, data);
+      data  = 0x0;          //- Image length for upper DWORD
+      write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_INDIRECT_FIFO_CTRL_1, data);
+      printf("  * MCU: FIFO control written... \n");
+      
+      // - BMC Starts sending payloads in chunks of 256B (image payload) + 4B (header) - I3C Write  
+      send_payload();
+
+      // - If image is greater than 256B, number of I3C writes will be (Image size / 256B) + (Image size % 256B?== 1? 1:0) 
+      // - BMC writes to RECOVERY_CTRL register to activate the image. - I3C Write byte 2 with 0xf
+      data = 0x0f0000; //-- Activating Image
+      write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_RECOVERY_CTRL, data);
+
+      // - BMC reads from RECOVERY_CTRL register to confirm, image activation was read. - I3C read (optional) - (end of recovery)
+      data = read_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_RECOVERY_CTRL);
+      while(data != 0x0) {
+        if(flag) {
+          printf("  * MCU: Polling for deassertion of recovery image activation...\n");
+          flag = 0;
+        }
+        data = read_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_RECOVERY_CTRL);
+        caliptra_sleep(32);
+      }
+      // - Update with RECOVERY_STATUS by incrementing image index. - I3C Write
+      write_i3c_reg(I3C_REG_I3C_EC_SECFWRECOVERYIF_RECOVERY_STATUS, 0x1);
+
+  //-- dummy steps end
+
+  // Poll for Recovery Image Ready
+  poll_for_recovery_image_ready();
+
+  
 
   while(1);
 
