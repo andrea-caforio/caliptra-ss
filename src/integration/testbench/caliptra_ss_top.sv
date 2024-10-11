@@ -1108,6 +1108,22 @@ import caliptra_top_tb_pkg::*;
         assign axi_interconnect.mintf_arr[2].RREADY = '0;
 
         // AXI Interconnect connections
+        logic m_axi_if_rd_is_upper_dw_latched;
+        logic m_axi_if_wr_is_upper_dw_latched;
+        // FIXME this is a gross hack for data width conversion
+        always@(posedge core_clk or negedge rst_l)
+            if (!rst_l)
+                m_axi_if_wr_is_upper_dw_latched <= 0;
+            else if (m_axi_if.awvalid && m_axi_if.awready)
+                m_axi_if_wr_is_upper_dw_latched <= m_axi_if.awaddr[2] && (m_axi_if.awsize < 3);
+        `CALIPTRA_ASSERT(CPTRA_AXI_DMA_WR_32BIT, (m_axi_if.awvalid && m_axi_if.awready) -> (m_axi_if.awsize < 3), core_clk, !rst_l)
+        // FIXME this is a gross hack for data width conversion
+        always@(posedge core_clk or negedge rst_l)
+            if (!rst_l)
+                m_axi_if_rd_is_upper_dw_latched <= 0;
+            else if (m_axi_if.arvalid && m_axi_if.arready)
+                m_axi_if_rd_is_upper_dw_latched <= m_axi_if.araddr[2] && (m_axi_if.arsize < 3);
+        `CALIPTRA_ASSERT(CPTRA_AXI_DMA_RD_32BIT, (m_axi_if.arvalid && m_axi_if.arready) -> (m_axi_if.arsize < 3), core_clk, !rst_l)
         assign axi_interconnect.mintf_arr[3].AWVALID = m_axi_if.awvalid;
         assign axi_interconnect.mintf_arr[3].AWADDR  = m_axi_if.awaddr;
         assign axi_interconnect.mintf_arr[3].AWID    = m_axi_if.awid;
@@ -1119,8 +1135,8 @@ import caliptra_top_tb_pkg::*;
         assign m_axi_if.awready                      = axi_interconnect.mintf_arr[3].AWREADY;
 
         assign axi_interconnect.mintf_arr[3].WVALID  = m_axi_if.wvalid;
-        assign axi_interconnect.mintf_arr[3].WDATA   = m_axi_if.wdata;
-        assign axi_interconnect.mintf_arr[3].WSTRB   = m_axi_if.wstrb;
+        assign axi_interconnect.mintf_arr[3].WDATA   = m_axi_if.wdata << (m_axi_if_wr_is_upper_dw_latched ? 32 : 0);
+        assign axi_interconnect.mintf_arr[3].WSTRB   = m_axi_if.wstrb << (m_axi_if_wr_is_upper_dw_latched ?  4 : 0);
         assign axi_interconnect.mintf_arr[3].WLAST   = m_axi_if.wlast;
         assign m_axi_if.wready                       = axi_interconnect.mintf_arr[3].WREADY;
 
@@ -1140,7 +1156,7 @@ import caliptra_top_tb_pkg::*;
         assign m_axi_if.arready                      = axi_interconnect.mintf_arr[3].ARREADY;
 
         assign m_axi_if.rvalid                       = axi_interconnect.mintf_arr[3].RVALID;
-        assign m_axi_if.rdata                        = axi_interconnect.mintf_arr[3].RDATA;
+        assign m_axi_if.rdata                        = axi_interconnect.mintf_arr[3].RDATA >> (m_axi_if_rd_is_upper_dw_latched ? 32 : 0);
         assign m_axi_if.rresp                        = axi_interconnect.mintf_arr[3].RRESP;
         assign m_axi_if.rid                          = axi_interconnect.mintf_arr[3].RID;
         assign m_axi_if.rlast                        = axi_interconnect.mintf_arr[3].RLAST;
