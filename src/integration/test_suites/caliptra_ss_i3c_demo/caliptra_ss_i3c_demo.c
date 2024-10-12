@@ -156,6 +156,7 @@ void poll_for_recovery_image_ready(){
       printf("  * MCU: Polling for recovery image ready...\n");
       flag = 0;
     }
+    caliptra_sleep(32);
   }
   flag = 1; // reset flag
   printf("  * MCU: Recovery image ready\n\n");
