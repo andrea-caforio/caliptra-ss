@@ -3,7 +3,7 @@ ${CALIPTRA_SS}/src/integration/test_suites/caliptra_ss_i3c_demo/soc_address_map.
 ${CALIPTRA_ROOT}/src/soc_ifc/rtl/mbox_csr.rdl \
 ${CALIPTRA_ROOT}/src/soc_ifc/rtl/sha512_acc_csr.rdl \
 ${CALIPTRA_ROOT}/src/soc_ifc/rtl/soc_ifc_doc.rdl \
-../../../../../i3c-core/src/rdl/registers.rdl
+${I3C_ROOT}/src/rdl/registers.rdl
 
 #../../../../../i3c-core/src/rdl/base_registers.rdl \
 #../../../../../i3c-core/src/rdl/pio_registers.rdl \
