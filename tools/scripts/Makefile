@@ -14,8 +14,12 @@
 #
 
 PLAYBOOK_RANDOM_SEED ?= $(shell date +%s)
+ZYNQ ?= 0
 BUILD_CFLAGS ?= 
 TEST_CFLAGS = -g -O3 -DMY_RANDOM_SEED=$(PLAYBOOK_RANDOM_SEED) $(BUILD_CFLAGS)
+ifeq (1,$(ZYNQ))
+	TEST_CFLAGS += -DCALIPTRA_SS_FPGA
+endif
 VERILATOR = verilator
 GCC_PREFIX = riscv64-unknown-elf
 BUILD_DIR = $(CURDIR)
@@ -124,7 +128,11 @@ endif
 # RK
 # provide specific link file
 ifeq (,$(wildcard $(TEST_DIR)/$(TESTNAME).ld))
+ifeq (1,$(ZYNQ))
+	LINK = $(RISCV_HW_IF_DIR)/link_zcu104.ld
+else
 	LINK = $(RISCV_HW_IF_DIR)/link.ld
+endif
 else
 	LINK = $(TEST_DIR)/$(TESTNAME).ld
 endif
@@ -307,11 +315,27 @@ mcu_program.hex: $(OFILE_CRT) $(OFILES) $(LINK)
 	$(GCC_PREFIX)-gcc $(ABI) -Wl,-Map=$(TESTNAME).map -lgcc -T$(LINK) -o $(TESTNAME).exe $(OFILE_CRT) $(OFILES) -nostartfiles  $(TEST_LIBS)
 	-$(GCC_PREFIX)-objcopy -O verilog -R .data -R .rodata -R .srodata -R .bss -R .sbss -R .data.io -R .eh_frame --pad-to 0x20000 --no-change-warnings $(TESTNAME).exe mcu_program.hex
 	-$(GCC_PREFIX)-objcopy -O verilog -R .text -R .data.io -R .eh_frame --pad-to 0x20000 --no-change-warnings $(TESTNAME).exe mcu_lmem.hex
-	-$(GCC_PREFIX)-objcopy -O binary --pad-to 0x6000 --no-change-warnings $(TESTNAME).exe mcu_program.bin
+	-$(GCC_PREFIX)-objcopy -O binary           -R .data.io -R .eh_frame --pad-to 0x6000 --no-change-warnings $(TESTNAME).exe mcu_program.bin
 	$(GCC_PREFIX)-objdump -S  $(TESTNAME).exe > $(TESTNAME).dis
 	$(GCC_PREFIX)-size        $(TESTNAME).exe | tee $(TESTNAME).size
 	riscv64-unknown-elf-nm -B -n $(TESTNAME).exe > $(TESTNAME).sym
 	-cp $(TEST_DIR)/mcu_update.hex .
+	@echo Completed building $(TESTNAME)
+
+mcu_update.hex: $(OFILE_CRT) $(OFILES) $(LINK)
+	@echo Building $(TESTNAME)
+	$(GCC_PREFIX)-gcc $(ABI) -Wl,-Map=$(TESTNAME).map -lgcc -T$(LINK) -o $(TESTNAME).exe $(OFILE_CRT) $(OFILES) -nostartfiles  $(TEST_LIBS)
+	-$(GCC_PREFIX)-objcopy -O verilog -R .data.io -R .eh_frame --pad-to 0x4000 --no-change-warnings $(TESTNAME).exe mcu_update.hex
+	-$(GCC_PREFIX)-objcopy -O binary \
+			--change-section-lma       .data-0x9001B000 \
+			--change-section-lma     .rodata-0x9001B000 \
+			--change-section-lma        .bss-0x9001B000 \
+			--change-section-lma       .sbss-0x9001B000 \
+			--change-section-lma       .text-0x9001B000 \
+			--pad-to 0x4000 --no-change-warnings $(TESTNAME).exe mcu_update.bin
+	$(GCC_PREFIX)-objdump -S  $(TESTNAME).exe > $(TESTNAME).dis
+	$(GCC_PREFIX)-size        $(TESTNAME).exe | tee $(TESTNAME).size
+	riscv64-unknown-elf-nm -B -n $(TESTNAME).exe > $(TESTNAME).sym
 	@echo Completed building $(TESTNAME)
 
 # cp /home/pure_scratch/caliptra/users/users/pateln/veer_el2_core_ws2/hello_world.dis mcu_hello_world.dis
