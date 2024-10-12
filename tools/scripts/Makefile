@@ -311,6 +311,7 @@ mcu_program.hex: $(OFILE_CRT) $(OFILES) $(LINK)
 	$(GCC_PREFIX)-objdump -S  $(TESTNAME).exe > $(TESTNAME).dis
 	$(GCC_PREFIX)-size        $(TESTNAME).exe | tee $(TESTNAME).size
 	riscv64-unknown-elf-nm -B -n $(TESTNAME).exe > $(TESTNAME).sym
+	-cp $(TEST_DIR)/mcu_update.hex .
 	@echo Completed building $(TESTNAME)
 
 # cp /home/pure_scratch/caliptra/users/users/pateln/veer_el2_core_ws2/hello_world.dis mcu_hello_world.dis

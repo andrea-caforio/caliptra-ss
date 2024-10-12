@@ -459,6 +459,9 @@ import caliptra_top_tb_pkg::*;
             if( mailbox_data_val & mailbox_write) begin
                 $fwrite(fd,"%c", mailbox_data[7:0]);
                 $write("%c", mailbox_data[7:0]);
+                if (mailbox_data[7:0] inside {8'h0A,8'h0D}) begin // CR/LF
+                    $fflush(fd);
+                end
             end
             // Interrupt signals control
             // data[7:0] == 0x80 - clear ext irq line index given by data[15:8]
@@ -613,6 +616,7 @@ import caliptra_top_tb_pkg::*;
             nmi_vector   = 32'hee000000;
 
             $readmemh("mcu_lmem.hex",     lmem.mem);
+            $readmemh("mcu_update.hex",   lmem.mem);
             $readmemh("mcu_program.hex",  imem.mem);
             tp = $fopen("trace_port.csv","w");
             el = $fopen("mcu_exec.log","w");
