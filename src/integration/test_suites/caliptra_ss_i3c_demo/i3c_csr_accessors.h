@@ -3,7 +3,11 @@
 #ifndef I3C_CSR_ACCESSORS_H
 #define I3C_CSR_ACCESSORS_H
 
-#include "soc_address_map.h"
+#ifdef CALIPTRA_SS_FPGA
+    #include "soc_address_map_fpga.h"
+#else
+    #include "soc_address_map.h"
+#endif
 #include "riscv_hw_if.h"
 
 #define DCT_MEM_WIDTH 128
