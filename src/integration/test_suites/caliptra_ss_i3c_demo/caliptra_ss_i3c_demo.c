@@ -15,7 +15,6 @@
 
 #include "printf.h"
 #include "riscv_hw_if.h"
-#include "soc_address_map.h"
 #include "soc_ifc.h"
 #include "i3c_csr_accessors.h"
 #include "I3CCSR.h"
@@ -45,6 +44,7 @@
 #define I3C_RECOVERY_STATUS_MASK 0xff
 
 #ifdef CALIPTRA_SS_FPGA
+    #include "soc_address_map_fpga.h"
     #define RESET_GPIO_ADDR 0x90020030
     #define MCU_RESET_VECTOR_ADDR 0x90020038
     #define MCU_LMEM_BASE_ADDR 0x80010000
@@ -53,6 +53,7 @@
     #define MCU_RECOVERY_IMAGE_SAVE_ADDR (MCU_LMEM_BASE_ADDR + 0xC000)
     volatile char *stdout = (char *)0x90021008;
 #else
+    #include "soc_address_map.h"
     #define RESET_GPIO_ADDR 0x82020030 /*FIXME*/
     #define MCU_RESET_VECTOR_ADDR 0x82020038 /*FIXME*/
     #define MCU_LMEM_BASE_ADDR 0x90010000
@@ -213,7 +214,7 @@ void main() {
 //  uint32_t* dbg_ptr = (uint32_t*)(MCU_LMEM_BASE_ADDR + 0x6000);
 
   printf("---------------------------\n");
-  printf(" Caliptra Subsystem Recovery Demo\n");
+  printf(" MCU: Caliptra Subsystem Recovery Demo\n");
   printf("---------------------------\n\n");
 
 
