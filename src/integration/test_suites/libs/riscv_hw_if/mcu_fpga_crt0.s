@@ -68,6 +68,83 @@ _finish:
 
 .align 4
 _trap:
+    la t0, tohost
+    li a0, 0x2e
+    sb a0, 0(t0)
+    // mcause
+    csrr a0, 0x342
+    fence.i
+    srli t1, a0, 28
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    srli t1, a0, 24
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    srli t1, a0, 20
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    srli t1, a0, 16
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    srli t1, a0, 12
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    srli t1, a0, 8
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    srli t1, a0, 4
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    //srli t1, a0, 28
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    // sep '.'
+    li a0, 0x2e
+    sb a0, 0(t0)
+    // mscause
+    csrr a0, 0x7ff
+    fence.i
+    srli t1, a0, 28
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    srli t1, a0, 24
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    srli t1, a0, 20
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    srli t1, a0, 16
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    srli t1, a0, 12
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    srli t1, a0, 8
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    srli t1, a0, 4
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    //srli t1, a0, 28
+    andi t1, t1, 0xf
+    addi t1, t1, 0x30
+    sb t1, 0(t0)
+    // Failure
     li a0, 1 # failure
     j _finish
 
