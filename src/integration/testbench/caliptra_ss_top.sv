@@ -616,7 +616,8 @@ import caliptra_top_tb_pkg::*;
             nmi_vector   = 32'hee000000;
 
             $readmemh("mcu_lmem.hex",     lmem.mem);
-            $readmemh("mcu_update.hex",   lmem.mem);
+            // $readmemh("mcu_update.hex",   lmem.mem);
+            $readmemh("caliptra_img.hex",   lmem.mem);
             $readmemh("mcu_program.hex",  imem.mem);
             tp = $fopen("trace_port.csv","w");
             el = $fopen("mcu_exec.log","w");

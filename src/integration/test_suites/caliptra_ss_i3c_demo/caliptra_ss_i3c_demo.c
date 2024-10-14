@@ -71,7 +71,10 @@ enum printf_verbosity verbosity_g = LOW;
 #endif
 
 #define BLOCK_DW_COUNT 4
-#define RCVY_IMAGE_SIZE 29
+
+// #define RCVY_IMAGE_SIZE 29 //-- MCU IMAGE
+#define RCVY_IMAGE_SIZE 40 //-- Caliptra IMAGE
+
 
 
 void caliptra_sleep(int cycles) {
@@ -213,9 +216,9 @@ void main() {
 
 //  uint32_t* dbg_ptr = (uint32_t*)(MCU_LMEM_BASE_ADDR + 0x6000);
 
-  printf("---------------------------\n");
+  printf("--------------------------------------\n");
   printf(" MCU: Caliptra Subsystem Recovery Demo\n");
-  printf("---------------------------\n\n");
+  printf("---------------------------------------\n\n");
 
 
   // Run test for I3C Base registers ------------------------------------------
