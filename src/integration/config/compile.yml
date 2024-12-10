@@ -1,6 +1,7 @@
 provides: [caliptra_ss_top]
 schema_version: 2.4.0
 requires:
+  - uvmf_lib
   - mcu_top
   - css_mcu0_veer_el2_rtl_pkg
   - i3c-core
@@ -13,6 +14,27 @@ targets:
       - /cad/tools/mentor/avery/2023.2/axixactor-2.1e.230314//src.axi
       - /cad/tools/mentor/avery/2023.2/axixactor-2.1e.230314//checker/BP063-BU-01000-r0p1-00rel0/sva
       - /cad/tools/mentor/avery/2023.2/axixactor-2.1e.230314//testbench
+      - /cad/tools/mentor/avery/2024.3/avery_sim
+      - /cad/tools/mentor/avery/2024.3/avery_sim/src
+      - /cad/tools/mentor/avery/2024.3/avery_sim/src.IEEE
+      - /cad/tools/mentor/avery/2024.3/avery_pli
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/src
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/src.i3c
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/src.VCS
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/src.i3c
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/testsuite.i3c/examples
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/testsuite.i3c/examples.uvm
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/testsuite.i3c/dut
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/testsuite.i3c/dut1_1
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/testsuite.i3c/dut_slave
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/testsuite.i3c/dut_master
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/testsuite.i3c/dut_master_stby
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/testsuite.i3c/internal
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/testsuite.i3c/dut_basic
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/testsuite.i3c/dut_hci2
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/testsuite.i3c/dut_hci1_2
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/testbench
     files:
       # - $COMPILE_ROOT/../../../../chipsalliance/caliptra-rtl/src/axi/rtl/caliptra_axi_sram.sv
       - /cad/tools/mentor/avery/2023.2/axixactor-2.1e.230314//src/avery_pkg.sv
@@ -22,6 +44,13 @@ targets:
       - /cad/tools/mentor/avery/2023.2/axixactor-2.1e.230314//src.axi/aaxi_class_pll.sv
       - /cad/tools/mentor/avery/2023.2/axixactor-2.1e.230314//src.axi/aaxi_pkg_test.sv
       - /cad/tools/mentor/avery/2023.2/axixactor-2.1e.230314//src.axi/aaxi_intf.sv
+      - /cad/tools/mentor/avery/2024.3/avery_sim/src/avery_pkg.sv
+      - /cad/tools/mentor/avery/2024.3/avery_sim/src/avery_pkg_test.sv
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/src/ai2c_pkg.sv
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/src.i3c/ai3c_pkg.sv
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/src/ai2c_intf.sv
+      - $COMPILE_ROOT/testbench/ai3c_intf.sv
+      - /cad/tools/mentor/avery/2024.3/i3cxactor/src.i3c/ai3c_intf.sv
       - $COMPILE_ROOT/testbench/tb_top_pkg.sv
       - $COMPILE_ROOT/testbench/axi_slv.sv
       - $COMPILE_ROOT/testbench/dasm.svi
@@ -57,6 +86,7 @@ global:
         - '-noinherit_timescale=1ns/1ps'
         - +define+AAXI_INTC_MASTER_CNT=5
         - +define+AAXI_INTC_SLAVE_CNT=5
+        - +define+AI3C_LANE_NUM=1
         - '/cad/tools/mentor/avery/2.5c/avery_pli-2023_0609/lib.linux/libtb_vcs64.a'
         - '-P /cad/tools/mentor/avery/2.5c/avery_pli-2023_0609/tb_vcs64.tab'
       elab:

@@ -36,6 +36,7 @@ void main (void) {
                              0xffffffff };
     uint32_t mbox_resp_dlen;
     uint32_t mbox_resp_data;
+    uint32_t i3c_reg_data;
 
     VPRINTF(LOW, "=================\nMCU Caliptra Bringup\n=================\n\n")
 
@@ -127,6 +128,37 @@ void main (void) {
     lsu_write_32(SOC_MBOX_CSR_MBOX_EXECUTE, 0);
     VPRINTF(LOW, "MCU: Mbox execute clear\n");
 
+
+    // ////////////////////////////////////
+    // // I3C Bringup
+    // // tb.reg_map.I3C_EC.SOCMGMTIF.T_R_REG = 2
+    // // tb.reg_map.I3C_EC.SOCMGMTIF.T_HD_DAT_REG = 10 
+    // // tb.reg_map.I3C_EC.SOCMGMTIF.T_SU_DAT_REG =  10
+    // // tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.STBY_CR_ENABLE_INIT = 2
+    // // tb.reg_map.I3C_EC.STDBYCTRLMODE.STBY_CR_CONTROL.TARGET_XACT_ENABLE = 1
+    // // tb.reg_map.I3CBASE.HC_CONTROL.BUS_ENABLE = 1
+    
+    VPRINTF(LOW, "MCU: Bringing up I3C Interface .. Started \n");
+
+    lsu_write_32( SOC_I3CCSR_I3C_EC_SOCMGMTIF_T_R_REG, 2);
+    lsu_write_32( SOC_I3CCSR_I3C_EC_SOCMGMTIF_T_HD_DAT_REG , 10);
+    lsu_write_32( SOC_I3CCSR_I3C_EC_SOCMGMTIF_T_SU_DAT_REG, 10);
+
+    i3c_reg_data = lsu_read_32( SOC_I3CCSR_I3C_EC_STDBYCTRLMODE_STBY_CR_CONTROL);
+    i3c_reg_data = 2 << I3CCSR_I3C_EC_STDBYCTRLMODE_STBY_CR_CONTROL_STBY_CR_ENABLE_INIT_LOW | i3c_reg_data;
+    i3c_reg_data = 1 << I3CCSR_I3C_EC_STDBYCTRLMODE_STBY_CR_CONTROL_TARGET_XACT_ENABLE_LOW | i3c_reg_data;
+    lsu_write_32( SOC_I3CCSR_I3C_EC_STDBYCTRLMODE_STBY_CR_CONTROL, i3c_reg_data);
+
+    i3c_reg_data = lsu_read_32( SOC_I3CCSR_I3CBASE_HC_CONTROL);
+    i3c_reg_data = 1 << I3CCSR_I3CBASE_HC_CONTROL_BUS_ENABLE_LOW | i3c_reg_data;
+    lsu_write_32( SOC_I3CCSR_I3CBASE_HC_CONTROL, i3c_reg_data);
+
+    VPRINTF(LOW, "MCU: Bringing up I3C Interface .. Completed \n");
+
+    // lsu_write_32( I3CCSR_I3C_EC_STDBYCTRLMODE_STBY_CR_CONTROL_STBY_CR_ENABLE_INIT_MASK, 2);
+    // lsu_write_32( I3CCSR_I3C_EC_STDBYCTRLMODE_STBY_CR_CONTROL_TARGET_XACT_ENABLE_MASK, 1);
+    // lsu_write_32( I3CCSR_I3CBASE_HC_CONTROL_BUS_ENABLE_MASK , 1);
+    
     SEND_STDOUT_CTRL(0xff);
 
 }

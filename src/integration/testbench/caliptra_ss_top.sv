@@ -13,6 +13,7 @@
 // limitations under the License.
 //
 //`define MCU_DRAM(bk) caliptra_ss_top.mcu_top_i.dccm_loop[bk].ram.ram_core
+
 `define MCU_RV_LSU_BUS_TAG_local 1
 `default_nettype none
 
@@ -21,9 +22,14 @@
 `include "caliptra_reg_defines.svh"
 `include "caliptra_macros.svh"
 `include "i3c_defines.svh"
+`include "avery_defines.svh"
+
 
 module caliptra_ss_top
+    import uvm_pkg::*;
     import tb_top_pkg::*;
+    import ai2c_pkg::*;
+    import ai3c_pkg::*;
 #(
     `include "css_mcu0_el2_param.vh"
 ) (
@@ -33,16 +39,16 @@ module caliptra_ss_top
     input bit [31:0]            mem_mailbox
     `endif // VERILATOR
     // I3C Interface
-`ifdef VERILATOR
-    input  logic scl_i,
-    input  logic sda_i,
-    output logic scl_o,
-    output logic sda_o,
-    output logic sel_od_pp_o
-`else
-    inout  wire  i3c_scl_io,
-    inout  wire  i3c_sda_io
-`endif
+// `ifdef VERILATOR
+//     input  logic scl_i,
+//     input  logic sda_i,
+//     output logic scl_o,
+//     output logic sda_o,
+//     output logic sel_od_pp_o
+// `else
+    // inout  wand  i3c_scl_io,
+    // inout  wand  i3c_sda_io
+// `endif
 );
     import axi_pkg::*;
     import soc_ifc_pkg::*;
@@ -514,6 +520,7 @@ module caliptra_ss_top
                 $display("* TESTCASE PASSED");
                 $display("\nFinished : minstret = %0d, mcycle = %0d", `MCU_DEC.tlu.minstretl[31:0],`MCU_DEC.tlu.mcyclel[31:0]);
                 $display("See \"mcu_exec.log\" for execution trace with register updates..\n");
+                #500us;
                 $finish;
             end
             else if(mailbox_data[7:0] == 8'h1) begin
@@ -1572,11 +1579,60 @@ module caliptra_ss_top
     //=========================================================================-
     // I3C-Core Instance
     //=========================================================================-
+    
+    // `define AI3C_LANE_NUM 1
+    // `define AI3C_SDA_EN 1
+    // `define AI3C_SLAVE_NUM 1
+
+    string env_str = "env0";
+    ai3c_env env0;
+    wire  i3c_scl_io;
+    wire  i3c_sda_io;
+
+    // --- Avery I3C master ---
+    ai3c_device#(`AI3C_LANE_NUM) master0;
+    ai3c_intf#(`AI3C_LANE_NUM) master0_intf(i3c_sda_io, i3c_scl_io);
+
+    // // // --- Avery I3C slave ---
+    // ai3c_device#(`AI3C_LANE_NUM) slaves[$];
+    // ai3c_device#(`AI3C_LANE_NUM) slave;
+    // ai3c_intf#(`AI3C_LANE_NUM) slave_intf(i3c_sda_io, i3c_scl_io);
+    
+
+    initial begin
+
+        // slave = new("slave", , AI3C_SLAVE, slave_intf);
+        // slave.log.enable_bus_tracker = 1;
+        // slave.cfg_info.basic_mode();
+        // slave.set("static_addr", 7'b010_0001);
+        // slaves.push_back(slave);
+
+        master0 = new("master0", , AI3C_MASTER, master0_intf);
+        master0.cfg_info.is_main_master = 1;
+        master0.log.enable_bus_tracker  = 1;
+        
+        env0 = new("env0");
+        wait (master0 != null);
+        env0.add_master(master0);
+        // env0.add_slave(slaves[0]);
+        master0.set("add_i3c_dev", 7'b101_1010); // slaves[0].get("static_addr"));
+        master0.set("start_bfm");
+        // slaves[0].set("start_bfm");
+                
+        // ai3c_run_test("ai3ct_basic", env0);
+
+    end
+
+
+    // --- AXI interface for I3C ---
     logic i3c_axi_rd_is_upper_dw_latched; // FIXME
     logic i3c_axi_wr_is_upper_dw_latched; // FIXME
     logic [31:0] i3c_axi_rdata_32; // FIXME
     logic [31:0] i3c_axi_wdata_32; // FIXME
     logic [3:0]  i3c_axi_wstrb_4; // FIXME
+
+    // wand scl;
+    // tri1 sda;
 
     i3c_wrapper #(
 `ifdef I3C_USE_AHB
@@ -1641,12 +1697,12 @@ module caliptra_ss_top
         .bresp_o    (axi_interconnect.sintf_arr[4].BRESP),
         .bid_o      (axi_interconnect.sintf_arr[4].BID),
 `endif
-`ifdef VERILATOR
-        .scl_i(scl_i),
-        .sda_i(sda_i),
-        .scl_o(scl_o),
-        .sda_o(sda_o),
-        .sel_od_pp_o(sel_od_pp_o)
+`ifdef DIGITAL_IO_I3C
+        .scl_i(master0_intf.scl),
+        .sda_i(master0_intf.sda),
+        .scl_o(master0_intf.scl_and),
+        .sda_o(master0_intf.sda_and),
+        .sel_od_pp_o(master0_intf.sda_en)
 `else
         .i3c_scl_io(i3c_scl_io),
         .i3c_sda_io(i3c_sda_io)
@@ -2597,5 +2653,15 @@ end : Gen_iccm_enable
 /* verilator lint_off CASEINCOMPLETE */
 `include "dasm.svi"
 /* verilator lint_on CASEINCOMPLETE */
+   
+
+    initial begin
+        $timeformat(-9,3,"ns",5);
+        // run_test();
+        `uvm_info("MCU0", "BOGO MCU0 started", UVM_NONE);
+    end
 
 endmodule
+
+// --- Avery I3C Test Case Bench ---
+`include "ai3c_tests_bench.sv"
