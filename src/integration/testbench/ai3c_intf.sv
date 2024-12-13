@@ -34,12 +34,12 @@ interface ai3c_intf #(
 `endif
 
     // // give default high
-    // initial begin
+    initial begin
     //     sda        = '1;
 	// scl        = 1;
-	// sda_en     = 0;
+	    sda_en     = 1;
 	// is_od_mode = 0;
-    // end
+    end
 
     // -- internal debug -- //
     logic [ 7:0] sdr_tx_dw;    // VAR: Use for debugging SDR mode sending data

@@ -520,7 +520,7 @@ module caliptra_ss_top
                 $display("* TESTCASE PASSED");
                 $display("\nFinished : minstret = %0d, mcycle = %0d", `MCU_DEC.tlu.minstretl[31:0],`MCU_DEC.tlu.mcyclel[31:0]);
                 $display("See \"mcu_exec.log\" for execution trace with register updates..\n");
-                #500us;
+                #100us;
                 $finish;
             end
             else if(mailbox_data[7:0] == 8'h1) begin
@@ -1615,7 +1615,12 @@ module caliptra_ss_top
         wait (master0 != null);
         env0.add_master(master0);
         // env0.add_slave(slaves[0]);
-        master0.set("add_i3c_dev", 7'b101_1010); // slaves[0].get("static_addr"));
+        
+        //--CASE 1 //-- 5A w/o shift
+        // master0.set("add_i3c_dev", 7'b101_1010); // slaves[0].get("static_addr"));
+        //--CASE 2 //-- 5A with shift
+        master0.set("add_i3c_dev", 7'b0101_101); // slaves[0].get("static_addr"));
+        
         master0.set("start_bfm");
         // slaves[0].set("start_bfm");
                 
@@ -1699,10 +1704,10 @@ module caliptra_ss_top
 `endif
 `ifdef DIGITAL_IO_I3C
         .scl_i(master0_intf.scl),
-        .sda_i(master0_intf.sda),
-        .scl_o(master0_intf.scl_and),
-        .sda_o(master0_intf.sda_and),
-        .sel_od_pp_o(master0_intf.sda_en)
+        .sda_i(master0_intf.sda_out),
+        .scl_o(master0_intf.scl),
+        .sda_o(master0_intf.sda),
+        .sel_od_pp_o(master0_intf.is_od_mode)
 `else
         .i3c_scl_io(i3c_scl_io),
         .i3c_sda_io(i3c_sda_io)
