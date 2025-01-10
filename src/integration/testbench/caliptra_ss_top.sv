@@ -2248,6 +2248,46 @@ module caliptra_ss_top
 
     assign scanmode_mubi = scan_mode ? caliptra_prim_mubi_pkg::MuBi4True : caliptra_prim_mubi_pkg::MuBi4False;
 
+
+    logic fuse_core_axi_rd_is_upper_dw_latched;
+    logic fuse_core_axi_wr_is_upper_dw_latched;
+    // FIXME this is a gross hack for data width conversion
+    always@(posedge core_clk or negedge rst_l)
+        if (!rst_l)
+            fuse_core_axi_wr_is_upper_dw_latched <= 0;
+        else if (core_axi_wr_req.awvalid && core_axi_wr_rsp.awready)
+            fuse_core_axi_wr_is_upper_dw_latched <= core_axi_wr_req.awaddr[2] && (core_axi_wr_req.awsize < 3);
+    `CALIPTRA_ASSERT(CPTRA_AXI_WR_32BIT, (core_axi_wr_req.awvalid && core_axi_wr_rsp.awready) -> (core_axi_wr_req.awsize < 3), core_clk, !rst_l)
+    // FIXME this is a gross hack for data width conversion
+    always@(posedge core_clk or negedge rst_l)
+    if (!rst_l)
+        fuse_core_axi_rd_is_upper_dw_latched <= 0;
+    else if (core_axi_rd_req.arvalid && core_axi_rd_rsp.arready)
+        fuse_core_axi_rd_is_upper_dw_latched <= core_axi_rd_req.araddr[2] && (core_axi_rd_req.arsize < 3);
+    `CALIPTRA_ASSERT(CPTRA_AXI_RD_32BIT, (core_axi_rd_req.arvalid && core_axi_rd_rsp.arready) -> (core_axi_rd_req.arsize < 3), core_clk, !rst_l)
+    
+
+    logic fuse_prim_axi_rd_is_upper_dw_latched;
+    logic fuse_prim_axi_wr_is_upper_dw_latched;
+    // FIXME this is a gross hack for data width conversion
+    always@(posedge core_clk or negedge rst_l)
+        if (!rst_l)
+            fuse_prim_axi_wr_is_upper_dw_latched <= 0;
+        else if (prim_axi_wr_req.awvalid && prim_axi_wr_rsp.awready)
+            fuse_prim_axi_wr_is_upper_dw_latched <= prim_axi_wr_req.awaddr[2] && (prim_axi_wr_req.awsize < 3);
+    `CALIPTRA_ASSERT(CPTRA_AXI_WR_32BIT, (prim_axi_wr_req.awvalid && prim_axi_wr_rsp.awready) -> (prim_axi_wr_req.awsize < 3), prim_clk, !rst_l)
+    // FIXME this is a gross hack for data width conversion
+    always@(posedge core_clk or negedge rst_l)
+    if (!rst_l)
+        fuse_prim_axi_rd_is_upper_dw_latched <= 0;
+    else if (prim_axi_rd_req.arvalid && prim_axi_rd_rsp.arready)
+        fuse_prim_axi_rd_is_upper_dw_latched <= prim_axi_rd_req.araddr[2] && (prim_axi_rd_req.arsize < 3);
+    `CALIPTRA_ASSERT(CPTRA_AXI_RD_32BIT, (prim_axi_rd_req.arvalid && prim_axi_rd_rsp.arready) -> (prim_axi_rd_req.arsize < 3), prim_clk, !rst_l)
+    
+
+
+
+
     assign core_axi_wr_req.awaddr = axi_interconnect.sintf_arr[5].AWADDR;
     assign core_axi_wr_req.awburst = axi_interconnect.sintf_arr[5].AWBURST;
     assign core_axi_wr_req.awsize = axi_interconnect.sintf_arr[5].AWSIZE;
@@ -2256,8 +2296,8 @@ module caliptra_ss_top
     assign core_axi_wr_req.awid = axi_interconnect.sintf_arr[5].AWID;
     assign core_axi_wr_req.awlock = axi_interconnect.sintf_arr[5].AWLOCK;
     assign core_axi_wr_req.awvalid = axi_interconnect.sintf_arr[5].AWVALID;
-    assign core_axi_wr_req.wdata = axi_interconnect.sintf_arr[5].WDATA;
-    assign core_axi_wr_req.wstrb = axi_interconnect.sintf_arr[5].WSTRB;
+    assign core_axi_wr_req.wdata = axi_interconnect.sintf_arr[5].WDATA >> (fuse_core_axi_wr_is_upper_dw_latched ? 32 : 0);
+    assign core_axi_wr_req.wstrb = axi_interconnect.sintf_arr[5].WSTRB >> (fuse_core_axi_wr_is_upper_dw_latched ? 4 : 0);
     assign core_axi_wr_req.wlast = axi_interconnect.sintf_arr[5].WLAST;
     assign core_axi_wr_req.wvalid = axi_interconnect.sintf_arr[5].WVALID;
     assign core_axi_wr_req.bready = axi_interconnect.sintf_arr[5].BREADY;
@@ -2279,7 +2319,7 @@ module caliptra_ss_top
     assign core_axi_rd_req.rready = axi_interconnect.sintf_arr[5].RREADY;
 
     assign axi_interconnect.sintf_arr[5].ARREADY = core_axi_rd_rsp.arready;
-    assign axi_interconnect.sintf_arr[5].RDATA = core_axi_rd_rsp.rdata;
+    assign axi_interconnect.sintf_arr[5].RDATA = 64'(core_axi_rd_rsp.rdata) << (fuse_core_axi_rd_is_upper_dw_latched ? 32 : 0);
     assign axi_interconnect.sintf_arr[5].RRESP = core_axi_rd_rsp.rresp;
     assign axi_interconnect.sintf_arr[5].RID = core_axi_rd_rsp.rid;
     assign axi_interconnect.sintf_arr[5].RLAST = core_axi_rd_rsp.rlast;
@@ -2293,8 +2333,8 @@ module caliptra_ss_top
     assign prim_axi_wr_req.awid = axi_interconnect.sintf_arr[6].AWID;
     assign prim_axi_wr_req.awlock = axi_interconnect.sintf_arr[6].AWLOCK;
     assign prim_axi_wr_req.awvalid = axi_interconnect.sintf_arr[6].AWVALID;
-    assign prim_axi_wr_req.wdata = axi_interconnect.sintf_arr[6].WDATA;
-    assign prim_axi_wr_req.wstrb = axi_interconnect.sintf_arr[6].WSTRB;
+    assign prim_axi_wr_req.wdata = axi_interconnect.sintf_arr[6].WDATA >> (fuse_prim_axi_wr_is_upper_dw_latched ? 32 : 0);
+    assign prim_axi_wr_req.wstrb = axi_interconnect.sintf_arr[6].WSTRB >> (fuse_prim_axi_wr_is_upper_dw_latched ? 4 : 0);
     assign prim_axi_wr_req.wlast = axi_interconnect.sintf_arr[6].WLAST;
     assign prim_axi_wr_req.wvalid = axi_interconnect.sintf_arr[6].WVALID;
     assign prim_axi_wr_req.bready = axi_interconnect.sintf_arr[6].BREADY;
@@ -2316,7 +2356,7 @@ module caliptra_ss_top
     assign prim_axi_rd_req.rready = axi_interconnect.sintf_arr[6].RREADY;
 
     assign axi_interconnect.sintf_arr[6].ARREADY = prim_axi_rd_rsp.arready;
-    assign axi_interconnect.sintf_arr[6].RDATA = prim_axi_rd_rsp.rdata;
+    assign axi_interconnect.sintf_arr[6].RDATA = 64'(prim_axi_rd_rsp.rdata) << (fuse_core_axi_rd_is_upper_dw_latched ? 32 : 0);
     assign axi_interconnect.sintf_arr[6].RRESP = prim_axi_rd_rsp.rresp;
     assign axi_interconnect.sintf_arr[6].RID = prim_axi_rd_rsp.rid;
     assign axi_interconnect.sintf_arr[6].RLAST = prim_axi_rd_rsp.rlast;
