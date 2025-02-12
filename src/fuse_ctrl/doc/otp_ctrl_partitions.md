@@ -14,7 +14,7 @@ It has been generated with ./util/design/gen-otp-mmap.py
 |        SW_MANUF_PARTITION        |    no    |     no     |     yes     | yes (Digest)  |   yes (CSR)   | Software manufacturing partition.                                   |
 |  SECRET_LC_TRANSITION_PARTITION  |   yes    |    yes     |     yes     | yes (Digest)  | yes (Digest)  | Secret life-cycle unlock token partition.                           |
 |          SVN_PARTITION           |    no    |     no     |     no      |      no       |   yes (CSR)   | SVN Partition.                                                      |
-|      VENDOR_TEST_PARTITION       |    no    |     no     |     no      |      no       |      no       | Vendor test partition.                                              |
+|      VENDOR_TEST_PARTITION       |    no    |     no     |     no      | yes (Digest)  |   yes (CSR)   | Vendor test partition.                                              |
 |   VENDOR_KEYS_MANUF_PARTITION    |    no    |     no     |     no      | yes (Digest)  |   yes (CSR)   | Vendor hashes manufacturing partition.                              |
 |    VENDOR_KEYS_PROD_PARTITION    |    no    |     no     |     no      | yes (Digest)  |   yes (CSR)   | Vendor hashes production partition.                                 |
 |   VENDOR_SECRET_PROD_PARTITION   |   yes    |    yes     |     yes     | yes (Digest)  | yes (Digest)  | Vendor secret production partition.                                 |

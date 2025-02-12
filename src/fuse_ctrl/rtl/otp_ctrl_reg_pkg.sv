@@ -9,129 +9,347 @@ package otp_ctrl_reg_pkg;
   // Param list
   parameter int NumSramKeyReqSlots = 4;
   parameter int OtpByteAddrWidth = 12;
-  parameter int NumErrorEntries = 16;
+  parameter int NumErrorEntries = 17;
   parameter int NumDaiWords = 2;
   parameter int NumDigestWords = 2;
   parameter int NumSwCfgWindowWords = 1024;
-  parameter int NumPart = 14;
-  parameter int NumPartUnbuf = 4;
-  parameter int NumPartBuf = 10;
-  parameter int SecretManufPartitionOffset = 0;
-  parameter int SecretManufPartitionSize = 120;
-  parameter int UdsSeedOffset = 0;
-  parameter int UdsSeedSize = 64;
-  parameter int ManufDebugUnlockTokenOffset = 64;
-  parameter int ManufDebugUnlockTokenSize = 16;
-  parameter int VendorSpecificSecretFusesOffset = 80;
-  parameter int VendorSpecificSecretFusesSize = 32;
-  parameter int SecretManufPartitionDigestOffset = 112;
+  parameter int NumPart = 15;
+  parameter int NumPartUnbuf = 6;
+  parameter int NumPartBuf = 9;
+  parameter int SecretTestUnlockPartitionOffset = 0;
+  parameter int SecretTestUnlockPartitionSize = 24;
+  parameter int CptraCoreManufDebugUnlockTokenOffset = 0;
+  parameter int CptraCoreManufDebugUnlockTokenSize = 16;
+  parameter int SecretTestUnlockPartitionDigestOffset = 16;
+  parameter int SecretTestUnlockPartitionDigestSize = 8;
+  parameter int SecretManufPartitionOffset = 24;
+  parameter int SecretManufPartitionSize = 72;
+  parameter int CptraCoreUdsSeedOffset = 24;
+  parameter int CptraCoreUdsSeedSize = 64;
+  parameter int SecretManufPartitionDigestOffset = 88;
   parameter int SecretManufPartitionDigestSize = 8;
-  parameter int SecretProdPartition0Offset = 120;
+  parameter int SecretProdPartition0Offset = 96;
   parameter int SecretProdPartition0Size = 16;
-  parameter int FieldEntropy0Offset = 120;
-  parameter int FieldEntropy0Size = 8;
-  parameter int SecretProdPartition0DigestOffset = 128;
+  parameter int CptraCoreFieldEntropy0Offset = 96;
+  parameter int CptraCoreFieldEntropy0Size = 8;
+  parameter int SecretProdPartition0DigestOffset = 104;
   parameter int SecretProdPartition0DigestSize = 8;
-  parameter int SecretProdPartition1Offset = 136;
+  parameter int SecretProdPartition1Offset = 112;
   parameter int SecretProdPartition1Size = 16;
-  parameter int FieldEntropy1Offset = 136;
-  parameter int FieldEntropy1Size = 8;
-  parameter int SecretProdPartition1DigestOffset = 144;
+  parameter int CptraCoreFieldEntropy1Offset = 112;
+  parameter int CptraCoreFieldEntropy1Size = 8;
+  parameter int SecretProdPartition1DigestOffset = 120;
   parameter int SecretProdPartition1DigestSize = 8;
-  parameter int SecretProdPartition2Offset = 152;
+  parameter int SecretProdPartition2Offset = 128;
   parameter int SecretProdPartition2Size = 16;
-  parameter int FieldEntropy2Offset = 152;
-  parameter int FieldEntropy2Size = 8;
-  parameter int SecretProdPartition2DigestOffset = 160;
+  parameter int CptraCoreFieldEntropy2Offset = 128;
+  parameter int CptraCoreFieldEntropy2Size = 8;
+  parameter int SecretProdPartition2DigestOffset = 136;
   parameter int SecretProdPartition2DigestSize = 8;
-  parameter int SecretProdPartition3Offset = 168;
+  parameter int SecretProdPartition3Offset = 144;
   parameter int SecretProdPartition3Size = 16;
-  parameter int FieldEntropy3Offset = 168;
-  parameter int FieldEntropy3Size = 8;
-  parameter int SecretProdPartition3DigestOffset = 176;
+  parameter int CptraCoreFieldEntropy3Offset = 144;
+  parameter int CptraCoreFieldEntropy3Size = 8;
+  parameter int SecretProdPartition3DigestOffset = 152;
   parameter int SecretProdPartition3DigestSize = 8;
-  parameter int SwManufPartitionOffset = 184;
-  parameter int SwManufPartitionSize = 2096;
-  parameter int KeyManifestPkHashOffset = 184;
-  parameter int KeyManifestPkHashSize = 48;
-  parameter int AntiRollbackDisableOffset = 232;
-  parameter int AntiRollbackDisableSize = 1;
-  parameter int DevidCertIdevidAttrOffset = 233;
-  parameter int DevidCertIdevidAttrSize = 96;
-  parameter int IdevidManufHsmIdentifierOffset = 329;
-  parameter int IdevidManufHsmIdentifierSize = 16;
-  parameter int SocSteppingIdOffset = 345;
-  parameter int SocSteppingIdSize = 2;
-  parameter int ProdDebugUnlockPksOffset = 347;
-  parameter int ProdDebugUnlockPksSize = 512;
-  parameter int VendorExpandedCaliptraFwAuthPkHashesOffset = 859;
-  parameter int VendorExpandedCaliptraFwAuthPkHashesSize = 48;
-  parameter int SwManufPartitionDigestOffset = 2272;
+  parameter int SwManufPartitionOffset = 160;
+  parameter int SwManufPartitionSize = 1104;
+  parameter int CptraCoreAntiRollbackDisableOffset = 160;
+  parameter int CptraCoreAntiRollbackDisableSize = 1;
+  parameter int CptraCoreIdevidCertIdevidAttrOffset = 161;
+  parameter int CptraCoreIdevidCertIdevidAttrSize = 96;
+  parameter int CptraCoreIdevidManufHsmIdentifierOffset = 257;
+  parameter int CptraCoreIdevidManufHsmIdentifierSize = 16;
+  parameter int CptraCoreSocSteppingIdOffset = 273;
+  parameter int CptraCoreSocSteppingIdSize = 2;
+  parameter int CptraSsProdDebugUnlockPksOffset = 275;
+  parameter int CptraSsProdDebugUnlockPksSize = 512;
+  parameter int SwManufPartitionDigestOffset = 1256;
   parameter int SwManufPartitionDigestSize = 8;
-  parameter int SwProdPartitionOffset = 2280;
-  parameter int SwProdPartitionSize = 1432;
-  parameter int EccRevocationOffset = 2280;
-  parameter int EccRevocationSize = 1;
-  parameter int OwnerPkHashOffset = 2281;
-  parameter int OwnerPkHashSize = 48;
-  parameter int LmsRevocationOffset = 2329;
-  parameter int LmsRevocationSize = 4;
-  parameter int MldsaRevocationOffset = 2333;
-  parameter int MldsaRevocationSize = 4;
-  parameter int VendorExpandedCaliptraFwAuthPkHashValidOffset = 2337;
-  parameter int VendorExpandedCaliptraFwAuthPkHashValidSize = 1;
-  parameter int SwProdPartitionDigestOffset = 3704;
-  parameter int SwProdPartitionDigestSize = 8;
-  parameter int SecretLcUnlockPartitionOffset = 3712;
-  parameter int SecretLcUnlockPartitionSize = 136;
-  parameter int TestUnlockToken0Offset = 3712;
-  parameter int TestUnlockToken0Size = 16;
-  parameter int TestUnlockToken1Offset = 3728;
-  parameter int TestUnlockToken1Size = 16;
-  parameter int TestUnlockToken2Offset = 3744;
-  parameter int TestUnlockToken2Size = 16;
-  parameter int TestUnlockToken3Offset = 3760;
-  parameter int TestUnlockToken3Size = 16;
-  parameter int TestUnlockToken4Offset = 3776;
-  parameter int TestUnlockToken4Size = 16;
-  parameter int TestUnlockToken5Offset = 3792;
-  parameter int TestUnlockToken5Size = 16;
-  parameter int TestUnlockToken6Offset = 3808;
-  parameter int TestUnlockToken6Size = 16;
-  parameter int TestUnlockToken7Offset = 3824;
-  parameter int TestUnlockToken7Size = 16;
-  parameter int SecretLcUnlockPartitionDigestOffset = 3840;
-  parameter int SecretLcUnlockPartitionDigestSize = 8;
-  parameter int SecretLcManufPartitionOffset = 3848;
-  parameter int SecretLcManufPartitionSize = 24;
-  parameter int ManufTokenOffset = 3848;
-  parameter int ManufTokenSize = 16;
-  parameter int SecretLcManufPartitionDigestOffset = 3864;
-  parameter int SecretLcManufPartitionDigestSize = 8;
-  parameter int SecretLcProdPartitionOffset = 3872;
-  parameter int SecretLcProdPartitionSize = 24;
-  parameter int ProdTokenOffset = 3872;
-  parameter int ProdTokenSize = 16;
-  parameter int SecretLcProdPartitionDigestOffset = 3888;
-  parameter int SecretLcProdPartitionDigestSize = 8;
-  parameter int SecretLcRmaPartitionOffset = 3896;
-  parameter int SecretLcRmaPartitionSize = 24;
-  parameter int RmaTokenOffset = 3896;
-  parameter int RmaTokenSize = 16;
-  parameter int SecretLcRmaPartitionDigestOffset = 3912;
-  parameter int SecretLcRmaPartitionDigestSize = 8;
-  parameter int SvnPartitionOffset = 3920;
-  parameter int SvnPartitionSize = 24;
-  parameter int FmcKeyManifestSvnOffset = 3920;
-  parameter int FmcKeyManifestSvnSize = 4;
-  parameter int RuntimeSvnOffset = 3924;
-  parameter int RuntimeSvnSize = 16;
-  parameter int VendorTestPartitionOffset = 3944;
+  parameter int SecretLcTransitionPartitionOffset = 1264;
+  parameter int SecretLcTransitionPartitionSize = 184;
+  parameter int CptraSsTestUnlockToken0Offset = 1264;
+  parameter int CptraSsTestUnlockToken0Size = 16;
+  parameter int CptraSsTestUnlockToken1Offset = 1280;
+  parameter int CptraSsTestUnlockToken1Size = 16;
+  parameter int CptraSsTestUnlockToken2Offset = 1296;
+  parameter int CptraSsTestUnlockToken2Size = 16;
+  parameter int CptraSsTestUnlockToken3Offset = 1312;
+  parameter int CptraSsTestUnlockToken3Size = 16;
+  parameter int CptraSsTestUnlockToken4Offset = 1328;
+  parameter int CptraSsTestUnlockToken4Size = 16;
+  parameter int CptraSsTestUnlockToken5Offset = 1344;
+  parameter int CptraSsTestUnlockToken5Size = 16;
+  parameter int CptraSsTestUnlockToken6Offset = 1360;
+  parameter int CptraSsTestUnlockToken6Size = 16;
+  parameter int CptraSsTestUnlockToken7Offset = 1376;
+  parameter int CptraSsTestUnlockToken7Size = 16;
+  parameter int CptraSsTestExitToManufTokenOffset = 1392;
+  parameter int CptraSsTestExitToManufTokenSize = 16;
+  parameter int CptraSsManufToProdTokenOffset = 1408;
+  parameter int CptraSsManufToProdTokenSize = 16;
+  parameter int CptraSsProdToProdEndTokenOffset = 1424;
+  parameter int CptraSsProdToProdEndTokenSize = 16;
+  parameter int SecretLcTransitionPartitionDigestOffset = 1440;
+  parameter int SecretLcTransitionPartitionDigestSize = 8;
+  parameter int SvnPartitionOffset = 1448;
+  parameter int SvnPartitionSize = 40;
+  parameter int CptraCoreFmcKeyManifestSvnOffset = 1448;
+  parameter int CptraCoreFmcKeyManifestSvnSize = 4;
+  parameter int CptraCoreRuntimeSvnOffset = 1452;
+  parameter int CptraCoreRuntimeSvnSize = 16;
+  parameter int CptraCoreSocManifestSvnOffset = 1468;
+  parameter int CptraCoreSocManifestSvnSize = 16;
+  parameter int CptraCoreSocManifestMaxSvnOffset = 1484;
+  parameter int CptraCoreSocManifestMaxSvnSize = 1;
+  parameter int VendorTestPartitionOffset = 1488;
   parameter int VendorTestPartitionSize = 64;
-  parameter int VendorTestOffset = 3944;
+  parameter int VendorTestOffset = 1488;
   parameter int VendorTestSize = 32;
-  parameter int VendorTestPartitionDigestOffset = 4000;
+  parameter int VendorTestPartitionDigestOffset = 1544;
   parameter int VendorTestPartitionDigestSize = 8;
+  parameter int VendorKeysManufPartitionOffset = 1552;
+  parameter int VendorKeysManufPartitionSize = 56;
+  parameter int CptraCoreVendorPkHash0Offset = 1552;
+  parameter int CptraCoreVendorPkHash0Size = 48;
+  parameter int VendorKeysManufPartitionDigestOffset = 1600;
+  parameter int VendorKeysManufPartitionDigestSize = 8;
+  parameter int VendorKeysProdPartitionOffset = 1608;
+  parameter int VendorKeysProdPartitionSize = 896;
+  parameter int CptraCoreEccRevocation0Offset = 1608;
+  parameter int CptraCoreEccRevocation0Size = 1;
+  parameter int CptraCoreLmsRevocation0Offset = 1609;
+  parameter int CptraCoreLmsRevocation0Size = 4;
+  parameter int CptraCoreMldsaRevocation0Offset = 1613;
+  parameter int CptraCoreMldsaRevocation0Size = 4;
+  parameter int CptraCorePqcKeyType0Offset = 1617;
+  parameter int CptraCorePqcKeyType0Size = 1;
+  parameter int CptraCoreVendorPkHash1Offset = 1618;
+  parameter int CptraCoreVendorPkHash1Size = 48;
+  parameter int CptraCoreEccRevocation1Offset = 1666;
+  parameter int CptraCoreEccRevocation1Size = 1;
+  parameter int CptraCoreLmsRevocation1Offset = 1667;
+  parameter int CptraCoreLmsRevocation1Size = 4;
+  parameter int CptraCoreMldsaRevocation1Offset = 1671;
+  parameter int CptraCoreMldsaRevocation1Size = 4;
+  parameter int CptraCorePqcKeyType1Offset = 1675;
+  parameter int CptraCorePqcKeyType1Size = 1;
+  parameter int CptraCoreVendorPkHash2Offset = 1676;
+  parameter int CptraCoreVendorPkHash2Size = 48;
+  parameter int CptraCoreEccRevocation2Offset = 1724;
+  parameter int CptraCoreEccRevocation2Size = 1;
+  parameter int CptraCoreLmsRevocation2Offset = 1725;
+  parameter int CptraCoreLmsRevocation2Size = 4;
+  parameter int CptraCoreMldsaRevocation2Offset = 1729;
+  parameter int CptraCoreMldsaRevocation2Size = 4;
+  parameter int CptraCorePqcKeyType2Offset = 1733;
+  parameter int CptraCorePqcKeyType2Size = 1;
+  parameter int CptraCoreVendorPkHash3Offset = 1734;
+  parameter int CptraCoreVendorPkHash3Size = 48;
+  parameter int CptraCoreEccRevocation3Offset = 1782;
+  parameter int CptraCoreEccRevocation3Size = 1;
+  parameter int CptraCoreLmsRevocation3Offset = 1783;
+  parameter int CptraCoreLmsRevocation3Size = 4;
+  parameter int CptraCoreMldsaRevocation3Offset = 1787;
+  parameter int CptraCoreMldsaRevocation3Size = 4;
+  parameter int CptraCorePqcKeyType3Offset = 1791;
+  parameter int CptraCorePqcKeyType3Size = 1;
+  parameter int CptraCoreVendorPkHash4Offset = 1792;
+  parameter int CptraCoreVendorPkHash4Size = 48;
+  parameter int CptraCoreEccRevocation4Offset = 1840;
+  parameter int CptraCoreEccRevocation4Size = 1;
+  parameter int CptraCoreLmsRevocation4Offset = 1841;
+  parameter int CptraCoreLmsRevocation4Size = 4;
+  parameter int CptraCoreMldsaRevocation4Offset = 1845;
+  parameter int CptraCoreMldsaRevocation4Size = 4;
+  parameter int CptraCorePqcKeyType4Offset = 1849;
+  parameter int CptraCorePqcKeyType4Size = 1;
+  parameter int CptraCoreVendorPkHash5Offset = 1850;
+  parameter int CptraCoreVendorPkHash5Size = 48;
+  parameter int CptraCoreEccRevocation5Offset = 1898;
+  parameter int CptraCoreEccRevocation5Size = 1;
+  parameter int CptraCoreLmsRevocation5Offset = 1899;
+  parameter int CptraCoreLmsRevocation5Size = 4;
+  parameter int CptraCoreMldsaRevocation5Offset = 1903;
+  parameter int CptraCoreMldsaRevocation5Size = 4;
+  parameter int CptraCorePqcKeyType5Offset = 1907;
+  parameter int CptraCorePqcKeyType5Size = 1;
+  parameter int CptraCoreVendorPkHash6Offset = 1908;
+  parameter int CptraCoreVendorPkHash6Size = 48;
+  parameter int CptraCoreEccRevocation6Offset = 1956;
+  parameter int CptraCoreEccRevocation6Size = 1;
+  parameter int CptraCoreLmsRevocation6Offset = 1957;
+  parameter int CptraCoreLmsRevocation6Size = 4;
+  parameter int CptraCoreMldsaRevocation6Offset = 1961;
+  parameter int CptraCoreMldsaRevocation6Size = 4;
+  parameter int CptraCorePqcKeyType6Offset = 1965;
+  parameter int CptraCorePqcKeyType6Size = 1;
+  parameter int CptraCoreVendorPkHash7Offset = 1966;
+  parameter int CptraCoreVendorPkHash7Size = 48;
+  parameter int CptraCoreEccRevocation7Offset = 2014;
+  parameter int CptraCoreEccRevocation7Size = 1;
+  parameter int CptraCoreLmsRevocation7Offset = 2015;
+  parameter int CptraCoreLmsRevocation7Size = 4;
+  parameter int CptraCoreMldsaRevocation7Offset = 2019;
+  parameter int CptraCoreMldsaRevocation7Size = 4;
+  parameter int CptraCorePqcKeyType7Offset = 2023;
+  parameter int CptraCorePqcKeyType7Size = 1;
+  parameter int CptraCoreVendorPkHash8Offset = 2024;
+  parameter int CptraCoreVendorPkHash8Size = 48;
+  parameter int CptraCoreEccRevocation8Offset = 2072;
+  parameter int CptraCoreEccRevocation8Size = 1;
+  parameter int CptraCoreLmsRevocation8Offset = 2073;
+  parameter int CptraCoreLmsRevocation8Size = 4;
+  parameter int CptraCoreMldsaRevocation8Offset = 2077;
+  parameter int CptraCoreMldsaRevocation8Size = 4;
+  parameter int CptraCorePqcKeyType8Offset = 2081;
+  parameter int CptraCorePqcKeyType8Size = 1;
+  parameter int CptraCoreVendorPkHash9Offset = 2082;
+  parameter int CptraCoreVendorPkHash9Size = 48;
+  parameter int CptraCoreEccRevocation9Offset = 2130;
+  parameter int CptraCoreEccRevocation9Size = 1;
+  parameter int CptraCoreLmsRevocation9Offset = 2131;
+  parameter int CptraCoreLmsRevocation9Size = 4;
+  parameter int CptraCoreMldsaRevocation9Offset = 2135;
+  parameter int CptraCoreMldsaRevocation9Size = 4;
+  parameter int CptraCorePqcKeyType9Offset = 2139;
+  parameter int CptraCorePqcKeyType9Size = 1;
+  parameter int CptraCoreVendorPkHash10Offset = 2140;
+  parameter int CptraCoreVendorPkHash10Size = 48;
+  parameter int CptraCoreEccRevocation10Offset = 2188;
+  parameter int CptraCoreEccRevocation10Size = 1;
+  parameter int CptraCoreLmsRevocation10Offset = 2189;
+  parameter int CptraCoreLmsRevocation10Size = 4;
+  parameter int CptraCoreMldsaRevocation10Offset = 2193;
+  parameter int CptraCoreMldsaRevocation10Size = 4;
+  parameter int CptraCorePqcKeyType10Offset = 2197;
+  parameter int CptraCorePqcKeyType10Size = 1;
+  parameter int CptraCoreVendorPkHash11Offset = 2198;
+  parameter int CptraCoreVendorPkHash11Size = 48;
+  parameter int CptraCoreEccRevocation11Offset = 2246;
+  parameter int CptraCoreEccRevocation11Size = 1;
+  parameter int CptraCoreLmsRevocation11Offset = 2247;
+  parameter int CptraCoreLmsRevocation11Size = 4;
+  parameter int CptraCoreMldsaRevocation11Offset = 2251;
+  parameter int CptraCoreMldsaRevocation11Size = 4;
+  parameter int CptraCorePqcKeyType11Offset = 2255;
+  parameter int CptraCorePqcKeyType11Size = 1;
+  parameter int CptraCoreVendorPkHash12Offset = 2256;
+  parameter int CptraCoreVendorPkHash12Size = 48;
+  parameter int CptraCoreEccRevocation12Offset = 2304;
+  parameter int CptraCoreEccRevocation12Size = 1;
+  parameter int CptraCoreLmsRevocation12Offset = 2305;
+  parameter int CptraCoreLmsRevocation12Size = 4;
+  parameter int CptraCoreMldsaRevocation12Offset = 2309;
+  parameter int CptraCoreMldsaRevocation12Size = 4;
+  parameter int CptraCorePqcKeyType12Offset = 2313;
+  parameter int CptraCorePqcKeyType12Size = 1;
+  parameter int CptraCoreVendorPkHash13Offset = 2314;
+  parameter int CptraCoreVendorPkHash13Size = 48;
+  parameter int CptraCoreEccRevocation13Offset = 2362;
+  parameter int CptraCoreEccRevocation13Size = 1;
+  parameter int CptraCoreLmsRevocation13Offset = 2363;
+  parameter int CptraCoreLmsRevocation13Size = 4;
+  parameter int CptraCoreMldsaRevocation13Offset = 2367;
+  parameter int CptraCoreMldsaRevocation13Size = 4;
+  parameter int CptraCorePqcKeyType13Offset = 2371;
+  parameter int CptraCorePqcKeyType13Size = 1;
+  parameter int CptraCoreVendorPkHash14Offset = 2372;
+  parameter int CptraCoreVendorPkHash14Size = 48;
+  parameter int CptraCoreEccRevocation14Offset = 2420;
+  parameter int CptraCoreEccRevocation14Size = 1;
+  parameter int CptraCoreLmsRevocation14Offset = 2421;
+  parameter int CptraCoreLmsRevocation14Size = 4;
+  parameter int CptraCoreMldsaRevocation14Offset = 2425;
+  parameter int CptraCoreMldsaRevocation14Size = 4;
+  parameter int CptraCorePqcKeyType14Offset = 2429;
+  parameter int CptraCorePqcKeyType14Size = 1;
+  parameter int CptraCoreVendorPkHash15Offset = 2430;
+  parameter int CptraCoreVendorPkHash15Size = 48;
+  parameter int CptraCoreEccRevocation15Offset = 2478;
+  parameter int CptraCoreEccRevocation15Size = 1;
+  parameter int CptraCoreLmsRevocation15Offset = 2479;
+  parameter int CptraCoreLmsRevocation15Size = 4;
+  parameter int CptraCoreMldsaRevocation15Offset = 2483;
+  parameter int CptraCoreMldsaRevocation15Size = 4;
+  parameter int CptraCorePqcKeyType15Offset = 2487;
+  parameter int CptraCorePqcKeyType15Size = 1;
+  parameter int CptraCoreVendorPkHashValidOffset = 2488;
+  parameter int CptraCoreVendorPkHashValidSize = 2;
+  parameter int VendorKeysProdPartitionDigestOffset = 2496;
+  parameter int VendorKeysProdPartitionDigestSize = 8;
+  parameter int VendorSecretProdPartitionOffset = 2504;
+  parameter int VendorSecretProdPartitionSize = 520;
+  parameter int CptraSsVendorSpecificSecretFuse0Offset = 2504;
+  parameter int CptraSsVendorSpecificSecretFuse0Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse1Offset = 2536;
+  parameter int CptraSsVendorSpecificSecretFuse1Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse2Offset = 2568;
+  parameter int CptraSsVendorSpecificSecretFuse2Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse3Offset = 2600;
+  parameter int CptraSsVendorSpecificSecretFuse3Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse4Offset = 2632;
+  parameter int CptraSsVendorSpecificSecretFuse4Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse5Offset = 2664;
+  parameter int CptraSsVendorSpecificSecretFuse5Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse6Offset = 2696;
+  parameter int CptraSsVendorSpecificSecretFuse6Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse7Offset = 2728;
+  parameter int CptraSsVendorSpecificSecretFuse7Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse8Offset = 2760;
+  parameter int CptraSsVendorSpecificSecretFuse8Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse9Offset = 2792;
+  parameter int CptraSsVendorSpecificSecretFuse9Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse10Offset = 2824;
+  parameter int CptraSsVendorSpecificSecretFuse10Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse11Offset = 2856;
+  parameter int CptraSsVendorSpecificSecretFuse11Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse12Offset = 2888;
+  parameter int CptraSsVendorSpecificSecretFuse12Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse13Offset = 2920;
+  parameter int CptraSsVendorSpecificSecretFuse13Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse14Offset = 2952;
+  parameter int CptraSsVendorSpecificSecretFuse14Size = 32;
+  parameter int CptraSsVendorSpecificSecretFuse15Offset = 2984;
+  parameter int CptraSsVendorSpecificSecretFuse15Size = 32;
+  parameter int VendorSecretProdPartitionDigestOffset = 3016;
+  parameter int VendorSecretProdPartitionDigestSize = 8;
+  parameter int VendorNonSecretProdPartitionOffset = 3024;
+  parameter int VendorNonSecretProdPartitionSize = 984;
+  parameter int CptraSsVendorSpecificNonSecretFuse0Offset = 3024;
+  parameter int CptraSsVendorSpecificNonSecretFuse0Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse1Offset = 3056;
+  parameter int CptraSsVendorSpecificNonSecretFuse1Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse2Offset = 3088;
+  parameter int CptraSsVendorSpecificNonSecretFuse2Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse3Offset = 3120;
+  parameter int CptraSsVendorSpecificNonSecretFuse3Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse4Offset = 3152;
+  parameter int CptraSsVendorSpecificNonSecretFuse4Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse5Offset = 3184;
+  parameter int CptraSsVendorSpecificNonSecretFuse5Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse6Offset = 3216;
+  parameter int CptraSsVendorSpecificNonSecretFuse6Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse7Offset = 3248;
+  parameter int CptraSsVendorSpecificNonSecretFuse7Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse8Offset = 3280;
+  parameter int CptraSsVendorSpecificNonSecretFuse8Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse9Offset = 3312;
+  parameter int CptraSsVendorSpecificNonSecretFuse9Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse10Offset = 3344;
+  parameter int CptraSsVendorSpecificNonSecretFuse10Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse11Offset = 3376;
+  parameter int CptraSsVendorSpecificNonSecretFuse11Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse12Offset = 3408;
+  parameter int CptraSsVendorSpecificNonSecretFuse12Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse13Offset = 3440;
+  parameter int CptraSsVendorSpecificNonSecretFuse13Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse14Offset = 3472;
+  parameter int CptraSsVendorSpecificNonSecretFuse14Size = 32;
+  parameter int CptraSsVendorSpecificNonSecretFuse15Offset = 3504;
+  parameter int CptraSsVendorSpecificNonSecretFuse15Size = 32;
+  parameter int VendorNonSecretProdPartitionDigestOffset = 4000;
+  parameter int VendorNonSecretProdPartitionDigestSize = 8;
   parameter int LifeCycleOffset = 4008;
   parameter int LifeCycleSize = 88;
   parameter int LcTransitionCntOffset = 4008;
@@ -143,6 +361,10 @@ package otp_ctrl_reg_pkg;
   // Address widths within the block
   parameter int CoreAw = 13;
   parameter int PrimAw = 5;
+
+  // Number of registers for every interface
+  parameter int NumRegsCore = 67;
+  parameter int NumRegsPrim = 8;
 
   ///////////////////////////////////////////////
   // Typedefs for registers for core interface //
@@ -257,15 +479,23 @@ package otp_ctrl_reg_pkg;
 
   typedef struct packed {
     logic        q;
-  } otp_ctrl_reg2hw_sw_prod_partition_read_lock_reg_t;
-
-  typedef struct packed {
-    logic        q;
   } otp_ctrl_reg2hw_svn_partition_read_lock_reg_t;
 
   typedef struct packed {
     logic        q;
   } otp_ctrl_reg2hw_vendor_test_partition_read_lock_reg_t;
+
+  typedef struct packed {
+    logic        q;
+  } otp_ctrl_reg2hw_vendor_keys_manuf_partition_read_lock_reg_t;
+
+  typedef struct packed {
+    logic        q;
+  } otp_ctrl_reg2hw_vendor_keys_prod_partition_read_lock_reg_t;
+
+  typedef struct packed {
+    logic        q;
+  } otp_ctrl_reg2hw_vendor_non_secret_prod_partition_read_lock_reg_t;
 
   typedef struct packed {
     struct packed {
@@ -279,6 +509,9 @@ package otp_ctrl_reg_pkg;
   } otp_ctrl_hw2reg_intr_state_reg_t;
 
   typedef struct packed {
+    struct packed {
+      logic        d;
+    } secret_test_unlock_partition_error;
     struct packed {
       logic        d;
     } secret_manuf_partition_error;
@@ -299,25 +532,25 @@ package otp_ctrl_reg_pkg;
     } sw_manuf_partition_error;
     struct packed {
       logic        d;
-    } sw_prod_partition_error;
-    struct packed {
-      logic        d;
-    } secret_lc_unlock_partition_error;
-    struct packed {
-      logic        d;
-    } secret_lc_manuf_partition_error;
-    struct packed {
-      logic        d;
-    } secret_lc_prod_partition_error;
-    struct packed {
-      logic        d;
-    } secret_lc_rma_partition_error;
+    } secret_lc_transition_partition_error;
     struct packed {
       logic        d;
     } svn_partition_error;
     struct packed {
       logic        d;
     } vendor_test_partition_error;
+    struct packed {
+      logic        d;
+    } vendor_keys_manuf_partition_error;
+    struct packed {
+      logic        d;
+    } vendor_keys_prod_partition_error;
+    struct packed {
+      logic        d;
+    } vendor_secret_prod_partition_error;
+    struct packed {
+      logic        d;
+    } vendor_non_secret_prod_partition_error;
     struct packed {
       logic        d;
     } life_cycle_error;
@@ -364,6 +597,10 @@ package otp_ctrl_reg_pkg;
 
   typedef struct packed {
     logic [31:0] d;
+  } otp_ctrl_hw2reg_secret_test_unlock_partition_digest_mreg_t;
+
+  typedef struct packed {
+    logic [31:0] d;
   } otp_ctrl_hw2reg_secret_manuf_partition_digest_mreg_t;
 
   typedef struct packed {
@@ -388,55 +625,62 @@ package otp_ctrl_reg_pkg;
 
   typedef struct packed {
     logic [31:0] d;
-  } otp_ctrl_hw2reg_sw_prod_partition_digest_mreg_t;
-
-  typedef struct packed {
-    logic [31:0] d;
-  } otp_ctrl_hw2reg_secret_lc_unlock_partition_digest_mreg_t;
-
-  typedef struct packed {
-    logic [31:0] d;
-  } otp_ctrl_hw2reg_secret_lc_manuf_partition_digest_mreg_t;
-
-  typedef struct packed {
-    logic [31:0] d;
-  } otp_ctrl_hw2reg_secret_lc_prod_partition_digest_mreg_t;
-
-  typedef struct packed {
-    logic [31:0] d;
-  } otp_ctrl_hw2reg_secret_lc_rma_partition_digest_mreg_t;
+  } otp_ctrl_hw2reg_secret_lc_transition_partition_digest_mreg_t;
 
   typedef struct packed {
     logic [31:0] d;
   } otp_ctrl_hw2reg_vendor_test_partition_digest_mreg_t;
 
+  typedef struct packed {
+    logic [31:0] d;
+  } otp_ctrl_hw2reg_vendor_keys_manuf_partition_digest_mreg_t;
+
+  typedef struct packed {
+    logic [31:0] d;
+  } otp_ctrl_hw2reg_vendor_keys_prod_partition_digest_mreg_t;
+
+  typedef struct packed {
+    logic [31:0] d;
+  } otp_ctrl_hw2reg_vendor_secret_prod_partition_digest_mreg_t;
+
+  typedef struct packed {
+    logic [31:0] d;
+  } otp_ctrl_hw2reg_vendor_non_secret_prod_partition_digest_mreg_t;
+
   // Register -> HW type for core interface
   typedef struct packed {
-    otp_ctrl_reg2hw_intr_state_reg_t intr_state; // [205:204]
-    otp_ctrl_reg2hw_intr_enable_reg_t intr_enable; // [203:202]
-    otp_ctrl_reg2hw_intr_test_reg_t intr_test; // [201:198]
-    otp_ctrl_reg2hw_alert_test_reg_t alert_test; // [197:188]
-    otp_ctrl_reg2hw_direct_access_regwen_reg_t direct_access_regwen; // [187:186]
-    otp_ctrl_reg2hw_direct_access_cmd_reg_t direct_access_cmd; // [185:180]
-    otp_ctrl_reg2hw_direct_access_address_reg_t direct_access_address; // [179:168]
-    otp_ctrl_reg2hw_direct_access_wdata_mreg_t [1:0] direct_access_wdata; // [167:104]
-    otp_ctrl_reg2hw_check_trigger_reg_t check_trigger; // [103:100]
-    otp_ctrl_reg2hw_check_timeout_reg_t check_timeout; // [99:68]
-    otp_ctrl_reg2hw_integrity_check_period_reg_t integrity_check_period; // [67:36]
-    otp_ctrl_reg2hw_consistency_check_period_reg_t consistency_check_period; // [35:4]
-    otp_ctrl_reg2hw_sw_manuf_partition_read_lock_reg_t sw_manuf_partition_read_lock; // [3:3]
-    otp_ctrl_reg2hw_sw_prod_partition_read_lock_reg_t sw_prod_partition_read_lock; // [2:2]
-    otp_ctrl_reg2hw_svn_partition_read_lock_reg_t svn_partition_read_lock; // [1:1]
-    otp_ctrl_reg2hw_vendor_test_partition_read_lock_reg_t vendor_test_partition_read_lock; // [0:0]
+    otp_ctrl_reg2hw_intr_state_reg_t intr_state; // [207:206]
+    otp_ctrl_reg2hw_intr_enable_reg_t intr_enable; // [205:204]
+    otp_ctrl_reg2hw_intr_test_reg_t intr_test; // [203:200]
+    otp_ctrl_reg2hw_alert_test_reg_t alert_test; // [199:190]
+    otp_ctrl_reg2hw_direct_access_regwen_reg_t direct_access_regwen; // [189:188]
+    otp_ctrl_reg2hw_direct_access_cmd_reg_t direct_access_cmd; // [187:182]
+    otp_ctrl_reg2hw_direct_access_address_reg_t direct_access_address; // [181:170]
+    otp_ctrl_reg2hw_direct_access_wdata_mreg_t [1:0] direct_access_wdata; // [169:106]
+    otp_ctrl_reg2hw_check_trigger_reg_t check_trigger; // [105:102]
+    otp_ctrl_reg2hw_check_timeout_reg_t check_timeout; // [101:70]
+    otp_ctrl_reg2hw_integrity_check_period_reg_t integrity_check_period; // [69:38]
+    otp_ctrl_reg2hw_consistency_check_period_reg_t consistency_check_period; // [37:6]
+    otp_ctrl_reg2hw_sw_manuf_partition_read_lock_reg_t sw_manuf_partition_read_lock; // [5:5]
+    otp_ctrl_reg2hw_svn_partition_read_lock_reg_t svn_partition_read_lock; // [4:4]
+    otp_ctrl_reg2hw_vendor_test_partition_read_lock_reg_t vendor_test_partition_read_lock; // [3:3]
+    otp_ctrl_reg2hw_vendor_keys_manuf_partition_read_lock_reg_t
+        vendor_keys_manuf_partition_read_lock; // [2:2]
+    otp_ctrl_reg2hw_vendor_keys_prod_partition_read_lock_reg_t
+        vendor_keys_prod_partition_read_lock; // [1:1]
+    otp_ctrl_reg2hw_vendor_non_secret_prod_partition_read_lock_reg_t
+        vendor_non_secret_prod_partition_read_lock; // [0:0]
   } otp_ctrl_core_reg2hw_t;
 
   // HW -> register type for core interface
   typedef struct packed {
-    otp_ctrl_hw2reg_intr_state_reg_t intr_state; // [907:904]
-    otp_ctrl_hw2reg_status_reg_t status; // [903:881]
-    otp_ctrl_hw2reg_err_code_mreg_t [15:0] err_code; // [880:833]
-    otp_ctrl_hw2reg_direct_access_regwen_reg_t direct_access_regwen; // [832:832]
-    otp_ctrl_hw2reg_direct_access_rdata_mreg_t [1:0] direct_access_rdata; // [831:768]
+    otp_ctrl_hw2reg_intr_state_reg_t intr_state; // [975:972]
+    otp_ctrl_hw2reg_status_reg_t status; // [971:948]
+    otp_ctrl_hw2reg_err_code_mreg_t [16:0] err_code; // [947:897]
+    otp_ctrl_hw2reg_direct_access_regwen_reg_t direct_access_regwen; // [896:896]
+    otp_ctrl_hw2reg_direct_access_rdata_mreg_t [1:0] direct_access_rdata; // [895:832]
+    otp_ctrl_hw2reg_secret_test_unlock_partition_digest_mreg_t [1:0]
+        secret_test_unlock_partition_digest; // [831:768]
     otp_ctrl_hw2reg_secret_manuf_partition_digest_mreg_t [1:0]
         secret_manuf_partition_digest; // [767:704]
     otp_ctrl_hw2reg_secret_prod_partition_0_digest_mreg_t [1:0]
@@ -448,17 +692,18 @@ package otp_ctrl_reg_pkg;
     otp_ctrl_hw2reg_secret_prod_partition_3_digest_mreg_t [1:0]
         secret_prod_partition_3_digest; // [511:448]
     otp_ctrl_hw2reg_sw_manuf_partition_digest_mreg_t [1:0] sw_manuf_partition_digest; // [447:384]
-    otp_ctrl_hw2reg_sw_prod_partition_digest_mreg_t [1:0] sw_prod_partition_digest; // [383:320]
-    otp_ctrl_hw2reg_secret_lc_unlock_partition_digest_mreg_t [1:0]
-        secret_lc_unlock_partition_digest; // [319:256]
-    otp_ctrl_hw2reg_secret_lc_manuf_partition_digest_mreg_t [1:0]
-        secret_lc_manuf_partition_digest; // [255:192]
-    otp_ctrl_hw2reg_secret_lc_prod_partition_digest_mreg_t [1:0]
-        secret_lc_prod_partition_digest; // [191:128]
-    otp_ctrl_hw2reg_secret_lc_rma_partition_digest_mreg_t [1:0]
-        secret_lc_rma_partition_digest; // [127:64]
+    otp_ctrl_hw2reg_secret_lc_transition_partition_digest_mreg_t [1:0]
+        secret_lc_transition_partition_digest; // [383:320]
     otp_ctrl_hw2reg_vendor_test_partition_digest_mreg_t [1:0]
-        vendor_test_partition_digest; // [63:0]
+        vendor_test_partition_digest; // [319:256]
+    otp_ctrl_hw2reg_vendor_keys_manuf_partition_digest_mreg_t [1:0]
+        vendor_keys_manuf_partition_digest; // [255:192]
+    otp_ctrl_hw2reg_vendor_keys_prod_partition_digest_mreg_t [1:0]
+        vendor_keys_prod_partition_digest; // [191:128]
+    otp_ctrl_hw2reg_vendor_secret_prod_partition_digest_mreg_t [1:0]
+        vendor_secret_prod_partition_digest; // [127:64]
+    otp_ctrl_hw2reg_vendor_non_secret_prod_partition_digest_mreg_t [1:0]
+        vendor_non_secret_prod_partition_digest; // [63:0]
   } otp_ctrl_core_hw2reg_t;
 
   // Register offsets for core interface
@@ -483,47 +728,52 @@ package otp_ctrl_reg_pkg;
   parameter logic [CoreAw-1:0] OTP_CTRL_ERR_CODE_13_OFFSET = 13'h 48;
   parameter logic [CoreAw-1:0] OTP_CTRL_ERR_CODE_14_OFFSET = 13'h 4c;
   parameter logic [CoreAw-1:0] OTP_CTRL_ERR_CODE_15_OFFSET = 13'h 50;
-  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_REGWEN_OFFSET = 13'h 54;
-  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_CMD_OFFSET = 13'h 58;
-  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_ADDRESS_OFFSET = 13'h 5c;
-  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_WDATA_0_OFFSET = 13'h 60;
-  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_WDATA_1_OFFSET = 13'h 64;
-  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_RDATA_0_OFFSET = 13'h 68;
-  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_RDATA_1_OFFSET = 13'h 6c;
-  parameter logic [CoreAw-1:0] OTP_CTRL_CHECK_TRIGGER_REGWEN_OFFSET = 13'h 70;
-  parameter logic [CoreAw-1:0] OTP_CTRL_CHECK_TRIGGER_OFFSET = 13'h 74;
-  parameter logic [CoreAw-1:0] OTP_CTRL_CHECK_REGWEN_OFFSET = 13'h 78;
-  parameter logic [CoreAw-1:0] OTP_CTRL_CHECK_TIMEOUT_OFFSET = 13'h 7c;
-  parameter logic [CoreAw-1:0] OTP_CTRL_INTEGRITY_CHECK_PERIOD_OFFSET = 13'h 80;
-  parameter logic [CoreAw-1:0] OTP_CTRL_CONSISTENCY_CHECK_PERIOD_OFFSET = 13'h 84;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SW_MANUF_PARTITION_READ_LOCK_OFFSET = 13'h 88;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SW_PROD_PARTITION_READ_LOCK_OFFSET = 13'h 8c;
+  parameter logic [CoreAw-1:0] OTP_CTRL_ERR_CODE_16_OFFSET = 13'h 54;
+  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_REGWEN_OFFSET = 13'h 58;
+  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_CMD_OFFSET = 13'h 5c;
+  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_ADDRESS_OFFSET = 13'h 60;
+  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_WDATA_0_OFFSET = 13'h 64;
+  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_WDATA_1_OFFSET = 13'h 68;
+  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_RDATA_0_OFFSET = 13'h 6c;
+  parameter logic [CoreAw-1:0] OTP_CTRL_DIRECT_ACCESS_RDATA_1_OFFSET = 13'h 70;
+  parameter logic [CoreAw-1:0] OTP_CTRL_CHECK_TRIGGER_REGWEN_OFFSET = 13'h 74;
+  parameter logic [CoreAw-1:0] OTP_CTRL_CHECK_TRIGGER_OFFSET = 13'h 78;
+  parameter logic [CoreAw-1:0] OTP_CTRL_CHECK_REGWEN_OFFSET = 13'h 7c;
+  parameter logic [CoreAw-1:0] OTP_CTRL_CHECK_TIMEOUT_OFFSET = 13'h 80;
+  parameter logic [CoreAw-1:0] OTP_CTRL_INTEGRITY_CHECK_PERIOD_OFFSET = 13'h 84;
+  parameter logic [CoreAw-1:0] OTP_CTRL_CONSISTENCY_CHECK_PERIOD_OFFSET = 13'h 88;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SW_MANUF_PARTITION_READ_LOCK_OFFSET = 13'h 8c;
   parameter logic [CoreAw-1:0] OTP_CTRL_SVN_PARTITION_READ_LOCK_OFFSET = 13'h 90;
   parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_TEST_PARTITION_READ_LOCK_OFFSET = 13'h 94;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_MANUF_PARTITION_DIGEST_0_OFFSET = 13'h 98;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_MANUF_PARTITION_DIGEST_1_OFFSET = 13'h 9c;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_0_DIGEST_0_OFFSET = 13'h a0;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_0_DIGEST_1_OFFSET = 13'h a4;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_1_DIGEST_0_OFFSET = 13'h a8;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_1_DIGEST_1_OFFSET = 13'h ac;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_2_DIGEST_0_OFFSET = 13'h b0;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_2_DIGEST_1_OFFSET = 13'h b4;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_3_DIGEST_0_OFFSET = 13'h b8;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_3_DIGEST_1_OFFSET = 13'h bc;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SW_MANUF_PARTITION_DIGEST_0_OFFSET = 13'h c0;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SW_MANUF_PARTITION_DIGEST_1_OFFSET = 13'h c4;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SW_PROD_PARTITION_DIGEST_0_OFFSET = 13'h c8;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SW_PROD_PARTITION_DIGEST_1_OFFSET = 13'h cc;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_LC_UNLOCK_PARTITION_DIGEST_0_OFFSET = 13'h d0;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_LC_UNLOCK_PARTITION_DIGEST_1_OFFSET = 13'h d4;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_LC_MANUF_PARTITION_DIGEST_0_OFFSET = 13'h d8;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_LC_MANUF_PARTITION_DIGEST_1_OFFSET = 13'h dc;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_LC_PROD_PARTITION_DIGEST_0_OFFSET = 13'h e0;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_LC_PROD_PARTITION_DIGEST_1_OFFSET = 13'h e4;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_LC_RMA_PARTITION_DIGEST_0_OFFSET = 13'h e8;
-  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_LC_RMA_PARTITION_DIGEST_1_OFFSET = 13'h ec;
-  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_0_OFFSET = 13'h f0;
-  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_1_OFFSET = 13'h f4;
+  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_KEYS_MANUF_PARTITION_READ_LOCK_OFFSET = 13'h 98;
+  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_KEYS_PROD_PARTITION_READ_LOCK_OFFSET = 13'h 9c;
+  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_NON_SECRET_PROD_PARTITION_READ_LOCK_OFFSET = 13'h a0;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_TEST_UNLOCK_PARTITION_DIGEST_0_OFFSET = 13'h a4;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_TEST_UNLOCK_PARTITION_DIGEST_1_OFFSET = 13'h a8;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_MANUF_PARTITION_DIGEST_0_OFFSET = 13'h ac;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_MANUF_PARTITION_DIGEST_1_OFFSET = 13'h b0;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_0_DIGEST_0_OFFSET = 13'h b4;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_0_DIGEST_1_OFFSET = 13'h b8;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_1_DIGEST_0_OFFSET = 13'h bc;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_1_DIGEST_1_OFFSET = 13'h c0;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_2_DIGEST_0_OFFSET = 13'h c4;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_2_DIGEST_1_OFFSET = 13'h c8;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_3_DIGEST_0_OFFSET = 13'h cc;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_PROD_PARTITION_3_DIGEST_1_OFFSET = 13'h d0;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SW_MANUF_PARTITION_DIGEST_0_OFFSET = 13'h d4;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SW_MANUF_PARTITION_DIGEST_1_OFFSET = 13'h d8;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_LC_TRANSITION_PARTITION_DIGEST_0_OFFSET = 13'h dc;
+  parameter logic [CoreAw-1:0] OTP_CTRL_SECRET_LC_TRANSITION_PARTITION_DIGEST_1_OFFSET = 13'h e0;
+  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_0_OFFSET = 13'h e4;
+  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_1_OFFSET = 13'h e8;
+  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_KEYS_MANUF_PARTITION_DIGEST_0_OFFSET = 13'h ec;
+  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_KEYS_MANUF_PARTITION_DIGEST_1_OFFSET = 13'h f0;
+  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_KEYS_PROD_PARTITION_DIGEST_0_OFFSET = 13'h f4;
+  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_KEYS_PROD_PARTITION_DIGEST_1_OFFSET = 13'h f8;
+  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_SECRET_PROD_PARTITION_DIGEST_0_OFFSET = 13'h fc;
+  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_SECRET_PROD_PARTITION_DIGEST_1_OFFSET = 13'h 100;
+  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_NON_SECRET_PROD_PARTITION_DIGEST_0_OFFSET = 13'h 104;
+  parameter logic [CoreAw-1:0] OTP_CTRL_VENDOR_NON_SECRET_PROD_PARTITION_DIGEST_1_OFFSET = 13'h 108;
 
   // Reset values for hwext registers and their fields for core interface
   parameter logic [1:0] OTP_CTRL_INTR_TEST_RESVAL = 2'h 0;
@@ -535,20 +785,21 @@ package otp_ctrl_reg_pkg;
   parameter logic [0:0] OTP_CTRL_ALERT_TEST_FATAL_BUS_INTEG_ERROR_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_ALERT_TEST_FATAL_PRIM_OTP_ALERT_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_ALERT_TEST_RECOV_PRIM_OTP_ALERT_RESVAL = 1'h 0;
-  parameter logic [22:0] OTP_CTRL_STATUS_RESVAL = 23'h 0;
+  parameter logic [23:0] OTP_CTRL_STATUS_RESVAL = 24'h 0;
+  parameter logic [0:0] OTP_CTRL_STATUS_SECRET_TEST_UNLOCK_PARTITION_ERROR_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_STATUS_SECRET_MANUF_PARTITION_ERROR_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_STATUS_SECRET_PROD_PARTITION_0_ERROR_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_STATUS_SECRET_PROD_PARTITION_1_ERROR_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_STATUS_SECRET_PROD_PARTITION_2_ERROR_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_STATUS_SECRET_PROD_PARTITION_3_ERROR_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_STATUS_SW_MANUF_PARTITION_ERROR_RESVAL = 1'h 0;
-  parameter logic [0:0] OTP_CTRL_STATUS_SW_PROD_PARTITION_ERROR_RESVAL = 1'h 0;
-  parameter logic [0:0] OTP_CTRL_STATUS_SECRET_LC_UNLOCK_PARTITION_ERROR_RESVAL = 1'h 0;
-  parameter logic [0:0] OTP_CTRL_STATUS_SECRET_LC_MANUF_PARTITION_ERROR_RESVAL = 1'h 0;
-  parameter logic [0:0] OTP_CTRL_STATUS_SECRET_LC_PROD_PARTITION_ERROR_RESVAL = 1'h 0;
-  parameter logic [0:0] OTP_CTRL_STATUS_SECRET_LC_RMA_PARTITION_ERROR_RESVAL = 1'h 0;
+  parameter logic [0:0] OTP_CTRL_STATUS_SECRET_LC_TRANSITION_PARTITION_ERROR_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_STATUS_SVN_PARTITION_ERROR_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_STATUS_VENDOR_TEST_PARTITION_ERROR_RESVAL = 1'h 0;
+  parameter logic [0:0] OTP_CTRL_STATUS_VENDOR_KEYS_MANUF_PARTITION_ERROR_RESVAL = 1'h 0;
+  parameter logic [0:0] OTP_CTRL_STATUS_VENDOR_KEYS_PROD_PARTITION_ERROR_RESVAL = 1'h 0;
+  parameter logic [0:0] OTP_CTRL_STATUS_VENDOR_SECRET_PROD_PARTITION_ERROR_RESVAL = 1'h 0;
+  parameter logic [0:0] OTP_CTRL_STATUS_VENDOR_NON_SECRET_PROD_PARTITION_ERROR_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_STATUS_LIFE_CYCLE_ERROR_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_STATUS_DAI_ERROR_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_STATUS_LCI_ERROR_RESVAL = 1'h 0;
@@ -591,6 +842,8 @@ package otp_ctrl_reg_pkg;
   parameter logic [2:0] OTP_CTRL_ERR_CODE_14_ERR_CODE_14_RESVAL = 3'h 0;
   parameter logic [2:0] OTP_CTRL_ERR_CODE_15_RESVAL = 3'h 0;
   parameter logic [2:0] OTP_CTRL_ERR_CODE_15_ERR_CODE_15_RESVAL = 3'h 0;
+  parameter logic [2:0] OTP_CTRL_ERR_CODE_16_RESVAL = 3'h 0;
+  parameter logic [2:0] OTP_CTRL_ERR_CODE_16_ERR_CODE_16_RESVAL = 3'h 0;
   parameter logic [0:0] OTP_CTRL_DIRECT_ACCESS_REGWEN_RESVAL = 1'h 1;
   parameter logic [0:0] OTP_CTRL_DIRECT_ACCESS_REGWEN_DIRECT_ACCESS_REGWEN_RESVAL = 1'h 1;
   parameter logic [2:0] OTP_CTRL_DIRECT_ACCESS_CMD_RESVAL = 3'h 0;
@@ -604,6 +857,14 @@ package otp_ctrl_reg_pkg;
   parameter logic [1:0] OTP_CTRL_CHECK_TRIGGER_RESVAL = 2'h 0;
   parameter logic [0:0] OTP_CTRL_CHECK_TRIGGER_INTEGRITY_RESVAL = 1'h 0;
   parameter logic [0:0] OTP_CTRL_CHECK_TRIGGER_CONSISTENCY_RESVAL = 1'h 0;
+  parameter logic [31:0] OTP_CTRL_SECRET_TEST_UNLOCK_PARTITION_DIGEST_0_RESVAL = 32'h 0;
+  parameter logic [31:0]
+      OTP_CTRL_SECRET_TEST_UNLOCK_PARTITION_DIGEST_0_SECRET_TEST_UNLOCK_PARTITION_DIGEST_0_RESVAL =
+      32'h 0;
+  parameter logic [31:0] OTP_CTRL_SECRET_TEST_UNLOCK_PARTITION_DIGEST_1_RESVAL = 32'h 0;
+  parameter logic [31:0]
+      OTP_CTRL_SECRET_TEST_UNLOCK_PARTITION_DIGEST_1_SECRET_TEST_UNLOCK_PARTITION_DIGEST_1_RESVAL =
+      32'h 0;
   parameter logic [31:0] OTP_CTRL_SECRET_MANUF_PARTITION_DIGEST_0_RESVAL = 32'h 0;
   parameter logic [31:0]
       OTP_CTRL_SECRET_MANUF_PARTITION_DIGEST_0_SECRET_MANUF_PARTITION_DIGEST_0_RESVAL =
@@ -652,45 +913,13 @@ package otp_ctrl_reg_pkg;
   parameter logic [31:0]
       OTP_CTRL_SW_MANUF_PARTITION_DIGEST_1_SW_MANUF_PARTITION_DIGEST_1_RESVAL =
       32'h 0;
-  parameter logic [31:0] OTP_CTRL_SW_PROD_PARTITION_DIGEST_0_RESVAL = 32'h 0;
+  parameter logic [31:0] OTP_CTRL_SECRET_LC_TRANSITION_PARTITION_DIGEST_0_RESVAL = 32'h 0;
   parameter logic [31:0]
-      OTP_CTRL_SW_PROD_PARTITION_DIGEST_0_SW_PROD_PARTITION_DIGEST_0_RESVAL =
+      OTP_CTRL_SECRET_LC_TRANSITION_PARTITION_DIGEST_0_SECRET_LC_TRANSITION_PARTITION_DIGEST_0_RESVAL =
       32'h 0;
-  parameter logic [31:0] OTP_CTRL_SW_PROD_PARTITION_DIGEST_1_RESVAL = 32'h 0;
+  parameter logic [31:0] OTP_CTRL_SECRET_LC_TRANSITION_PARTITION_DIGEST_1_RESVAL = 32'h 0;
   parameter logic [31:0]
-      OTP_CTRL_SW_PROD_PARTITION_DIGEST_1_SW_PROD_PARTITION_DIGEST_1_RESVAL =
-      32'h 0;
-  parameter logic [31:0] OTP_CTRL_SECRET_LC_UNLOCK_PARTITION_DIGEST_0_RESVAL = 32'h 0;
-  parameter logic [31:0]
-      OTP_CTRL_SECRET_LC_UNLOCK_PARTITION_DIGEST_0_SECRET_LC_UNLOCK_PARTITION_DIGEST_0_RESVAL =
-      32'h 0;
-  parameter logic [31:0] OTP_CTRL_SECRET_LC_UNLOCK_PARTITION_DIGEST_1_RESVAL = 32'h 0;
-  parameter logic [31:0]
-      OTP_CTRL_SECRET_LC_UNLOCK_PARTITION_DIGEST_1_SECRET_LC_UNLOCK_PARTITION_DIGEST_1_RESVAL =
-      32'h 0;
-  parameter logic [31:0] OTP_CTRL_SECRET_LC_MANUF_PARTITION_DIGEST_0_RESVAL = 32'h 0;
-  parameter logic [31:0]
-      OTP_CTRL_SECRET_LC_MANUF_PARTITION_DIGEST_0_SECRET_LC_MANUF_PARTITION_DIGEST_0_RESVAL =
-      32'h 0;
-  parameter logic [31:0] OTP_CTRL_SECRET_LC_MANUF_PARTITION_DIGEST_1_RESVAL = 32'h 0;
-  parameter logic [31:0]
-      OTP_CTRL_SECRET_LC_MANUF_PARTITION_DIGEST_1_SECRET_LC_MANUF_PARTITION_DIGEST_1_RESVAL =
-      32'h 0;
-  parameter logic [31:0] OTP_CTRL_SECRET_LC_PROD_PARTITION_DIGEST_0_RESVAL = 32'h 0;
-  parameter logic [31:0]
-      OTP_CTRL_SECRET_LC_PROD_PARTITION_DIGEST_0_SECRET_LC_PROD_PARTITION_DIGEST_0_RESVAL =
-      32'h 0;
-  parameter logic [31:0] OTP_CTRL_SECRET_LC_PROD_PARTITION_DIGEST_1_RESVAL = 32'h 0;
-  parameter logic [31:0]
-      OTP_CTRL_SECRET_LC_PROD_PARTITION_DIGEST_1_SECRET_LC_PROD_PARTITION_DIGEST_1_RESVAL =
-      32'h 0;
-  parameter logic [31:0] OTP_CTRL_SECRET_LC_RMA_PARTITION_DIGEST_0_RESVAL = 32'h 0;
-  parameter logic [31:0]
-      OTP_CTRL_SECRET_LC_RMA_PARTITION_DIGEST_0_SECRET_LC_RMA_PARTITION_DIGEST_0_RESVAL =
-      32'h 0;
-  parameter logic [31:0] OTP_CTRL_SECRET_LC_RMA_PARTITION_DIGEST_1_RESVAL = 32'h 0;
-  parameter logic [31:0]
-      OTP_CTRL_SECRET_LC_RMA_PARTITION_DIGEST_1_SECRET_LC_RMA_PARTITION_DIGEST_1_RESVAL =
+      OTP_CTRL_SECRET_LC_TRANSITION_PARTITION_DIGEST_1_SECRET_LC_TRANSITION_PARTITION_DIGEST_1_RESVAL =
       32'h 0;
   parameter logic [31:0] OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_0_RESVAL = 32'h 0;
   parameter logic [31:0]
@@ -699,6 +928,38 @@ package otp_ctrl_reg_pkg;
   parameter logic [31:0] OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_1_RESVAL = 32'h 0;
   parameter logic [31:0]
       OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_1_VENDOR_TEST_PARTITION_DIGEST_1_RESVAL =
+      32'h 0;
+  parameter logic [31:0] OTP_CTRL_VENDOR_KEYS_MANUF_PARTITION_DIGEST_0_RESVAL = 32'h 0;
+  parameter logic [31:0]
+      OTP_CTRL_VENDOR_KEYS_MANUF_PARTITION_DIGEST_0_VENDOR_KEYS_MANUF_PARTITION_DIGEST_0_RESVAL =
+      32'h 0;
+  parameter logic [31:0] OTP_CTRL_VENDOR_KEYS_MANUF_PARTITION_DIGEST_1_RESVAL = 32'h 0;
+  parameter logic [31:0]
+      OTP_CTRL_VENDOR_KEYS_MANUF_PARTITION_DIGEST_1_VENDOR_KEYS_MANUF_PARTITION_DIGEST_1_RESVAL =
+      32'h 0;
+  parameter logic [31:0] OTP_CTRL_VENDOR_KEYS_PROD_PARTITION_DIGEST_0_RESVAL = 32'h 0;
+  parameter logic [31:0]
+      OTP_CTRL_VENDOR_KEYS_PROD_PARTITION_DIGEST_0_VENDOR_KEYS_PROD_PARTITION_DIGEST_0_RESVAL =
+      32'h 0;
+  parameter logic [31:0] OTP_CTRL_VENDOR_KEYS_PROD_PARTITION_DIGEST_1_RESVAL = 32'h 0;
+  parameter logic [31:0]
+      OTP_CTRL_VENDOR_KEYS_PROD_PARTITION_DIGEST_1_VENDOR_KEYS_PROD_PARTITION_DIGEST_1_RESVAL =
+      32'h 0;
+  parameter logic [31:0] OTP_CTRL_VENDOR_SECRET_PROD_PARTITION_DIGEST_0_RESVAL = 32'h 0;
+  parameter logic [31:0]
+      OTP_CTRL_VENDOR_SECRET_PROD_PARTITION_DIGEST_0_VENDOR_SECRET_PROD_PARTITION_DIGEST_0_RESVAL =
+      32'h 0;
+  parameter logic [31:0] OTP_CTRL_VENDOR_SECRET_PROD_PARTITION_DIGEST_1_RESVAL = 32'h 0;
+  parameter logic [31:0]
+      OTP_CTRL_VENDOR_SECRET_PROD_PARTITION_DIGEST_1_VENDOR_SECRET_PROD_PARTITION_DIGEST_1_RESVAL =
+      32'h 0;
+  parameter logic [31:0] OTP_CTRL_VENDOR_NON_SECRET_PROD_PARTITION_DIGEST_0_RESVAL = 32'h 0;
+  parameter logic [31:0]
+      OTP_CTRL_VENDOR_NON_SECRET_PROD_PARTITION_DIGEST_0_VENDOR_NON_SECRET_PROD_PARTITION_DIGEST_0_RESVAL =
+      32'h 0;
+  parameter logic [31:0] OTP_CTRL_VENDOR_NON_SECRET_PROD_PARTITION_DIGEST_1_RESVAL = 32'h 0;
+  parameter logic [31:0]
+      OTP_CTRL_VENDOR_NON_SECRET_PROD_PARTITION_DIGEST_1_VENDOR_NON_SECRET_PROD_PARTITION_DIGEST_1_RESVAL =
       32'h 0;
 
   // Window parameters for core interface
@@ -729,6 +990,7 @@ package otp_ctrl_reg_pkg;
     OTP_CTRL_ERR_CODE_13,
     OTP_CTRL_ERR_CODE_14,
     OTP_CTRL_ERR_CODE_15,
+    OTP_CTRL_ERR_CODE_16,
     OTP_CTRL_DIRECT_ACCESS_REGWEN,
     OTP_CTRL_DIRECT_ACCESS_CMD,
     OTP_CTRL_DIRECT_ACCESS_ADDRESS,
@@ -743,9 +1005,13 @@ package otp_ctrl_reg_pkg;
     OTP_CTRL_INTEGRITY_CHECK_PERIOD,
     OTP_CTRL_CONSISTENCY_CHECK_PERIOD,
     OTP_CTRL_SW_MANUF_PARTITION_READ_LOCK,
-    OTP_CTRL_SW_PROD_PARTITION_READ_LOCK,
     OTP_CTRL_SVN_PARTITION_READ_LOCK,
     OTP_CTRL_VENDOR_TEST_PARTITION_READ_LOCK,
+    OTP_CTRL_VENDOR_KEYS_MANUF_PARTITION_READ_LOCK,
+    OTP_CTRL_VENDOR_KEYS_PROD_PARTITION_READ_LOCK,
+    OTP_CTRL_VENDOR_NON_SECRET_PROD_PARTITION_READ_LOCK,
+    OTP_CTRL_SECRET_TEST_UNLOCK_PARTITION_DIGEST_0,
+    OTP_CTRL_SECRET_TEST_UNLOCK_PARTITION_DIGEST_1,
     OTP_CTRL_SECRET_MANUF_PARTITION_DIGEST_0,
     OTP_CTRL_SECRET_MANUF_PARTITION_DIGEST_1,
     OTP_CTRL_SECRET_PROD_PARTITION_0_DIGEST_0,
@@ -758,22 +1024,22 @@ package otp_ctrl_reg_pkg;
     OTP_CTRL_SECRET_PROD_PARTITION_3_DIGEST_1,
     OTP_CTRL_SW_MANUF_PARTITION_DIGEST_0,
     OTP_CTRL_SW_MANUF_PARTITION_DIGEST_1,
-    OTP_CTRL_SW_PROD_PARTITION_DIGEST_0,
-    OTP_CTRL_SW_PROD_PARTITION_DIGEST_1,
-    OTP_CTRL_SECRET_LC_UNLOCK_PARTITION_DIGEST_0,
-    OTP_CTRL_SECRET_LC_UNLOCK_PARTITION_DIGEST_1,
-    OTP_CTRL_SECRET_LC_MANUF_PARTITION_DIGEST_0,
-    OTP_CTRL_SECRET_LC_MANUF_PARTITION_DIGEST_1,
-    OTP_CTRL_SECRET_LC_PROD_PARTITION_DIGEST_0,
-    OTP_CTRL_SECRET_LC_PROD_PARTITION_DIGEST_1,
-    OTP_CTRL_SECRET_LC_RMA_PARTITION_DIGEST_0,
-    OTP_CTRL_SECRET_LC_RMA_PARTITION_DIGEST_1,
+    OTP_CTRL_SECRET_LC_TRANSITION_PARTITION_DIGEST_0,
+    OTP_CTRL_SECRET_LC_TRANSITION_PARTITION_DIGEST_1,
     OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_0,
-    OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_1
+    OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_1,
+    OTP_CTRL_VENDOR_KEYS_MANUF_PARTITION_DIGEST_0,
+    OTP_CTRL_VENDOR_KEYS_MANUF_PARTITION_DIGEST_1,
+    OTP_CTRL_VENDOR_KEYS_PROD_PARTITION_DIGEST_0,
+    OTP_CTRL_VENDOR_KEYS_PROD_PARTITION_DIGEST_1,
+    OTP_CTRL_VENDOR_SECRET_PROD_PARTITION_DIGEST_0,
+    OTP_CTRL_VENDOR_SECRET_PROD_PARTITION_DIGEST_1,
+    OTP_CTRL_VENDOR_NON_SECRET_PROD_PARTITION_DIGEST_0,
+    OTP_CTRL_VENDOR_NON_SECRET_PROD_PARTITION_DIGEST_1
   } otp_ctrl_core_id_e;
 
   // Register width information to check illegal writes for core interface
-  parameter logic [3:0] OTP_CTRL_CORE_PERMIT [62] = '{
+  parameter logic [3:0] OTP_CTRL_CORE_PERMIT [67] = '{
     4'b 0001, // index[ 0] OTP_CTRL_INTR_STATE
     4'b 0001, // index[ 1] OTP_CTRL_INTR_ENABLE
     4'b 0001, // index[ 2] OTP_CTRL_INTR_TEST
@@ -795,47 +1061,52 @@ package otp_ctrl_reg_pkg;
     4'b 0001, // index[18] OTP_CTRL_ERR_CODE_13
     4'b 0001, // index[19] OTP_CTRL_ERR_CODE_14
     4'b 0001, // index[20] OTP_CTRL_ERR_CODE_15
-    4'b 0001, // index[21] OTP_CTRL_DIRECT_ACCESS_REGWEN
-    4'b 0001, // index[22] OTP_CTRL_DIRECT_ACCESS_CMD
-    4'b 0011, // index[23] OTP_CTRL_DIRECT_ACCESS_ADDRESS
-    4'b 1111, // index[24] OTP_CTRL_DIRECT_ACCESS_WDATA_0
-    4'b 1111, // index[25] OTP_CTRL_DIRECT_ACCESS_WDATA_1
-    4'b 1111, // index[26] OTP_CTRL_DIRECT_ACCESS_RDATA_0
-    4'b 1111, // index[27] OTP_CTRL_DIRECT_ACCESS_RDATA_1
-    4'b 0001, // index[28] OTP_CTRL_CHECK_TRIGGER_REGWEN
-    4'b 0001, // index[29] OTP_CTRL_CHECK_TRIGGER
-    4'b 0001, // index[30] OTP_CTRL_CHECK_REGWEN
-    4'b 1111, // index[31] OTP_CTRL_CHECK_TIMEOUT
-    4'b 1111, // index[32] OTP_CTRL_INTEGRITY_CHECK_PERIOD
-    4'b 1111, // index[33] OTP_CTRL_CONSISTENCY_CHECK_PERIOD
-    4'b 0001, // index[34] OTP_CTRL_SW_MANUF_PARTITION_READ_LOCK
-    4'b 0001, // index[35] OTP_CTRL_SW_PROD_PARTITION_READ_LOCK
+    4'b 0001, // index[21] OTP_CTRL_ERR_CODE_16
+    4'b 0001, // index[22] OTP_CTRL_DIRECT_ACCESS_REGWEN
+    4'b 0001, // index[23] OTP_CTRL_DIRECT_ACCESS_CMD
+    4'b 0011, // index[24] OTP_CTRL_DIRECT_ACCESS_ADDRESS
+    4'b 1111, // index[25] OTP_CTRL_DIRECT_ACCESS_WDATA_0
+    4'b 1111, // index[26] OTP_CTRL_DIRECT_ACCESS_WDATA_1
+    4'b 1111, // index[27] OTP_CTRL_DIRECT_ACCESS_RDATA_0
+    4'b 1111, // index[28] OTP_CTRL_DIRECT_ACCESS_RDATA_1
+    4'b 0001, // index[29] OTP_CTRL_CHECK_TRIGGER_REGWEN
+    4'b 0001, // index[30] OTP_CTRL_CHECK_TRIGGER
+    4'b 0001, // index[31] OTP_CTRL_CHECK_REGWEN
+    4'b 1111, // index[32] OTP_CTRL_CHECK_TIMEOUT
+    4'b 1111, // index[33] OTP_CTRL_INTEGRITY_CHECK_PERIOD
+    4'b 1111, // index[34] OTP_CTRL_CONSISTENCY_CHECK_PERIOD
+    4'b 0001, // index[35] OTP_CTRL_SW_MANUF_PARTITION_READ_LOCK
     4'b 0001, // index[36] OTP_CTRL_SVN_PARTITION_READ_LOCK
     4'b 0001, // index[37] OTP_CTRL_VENDOR_TEST_PARTITION_READ_LOCK
-    4'b 1111, // index[38] OTP_CTRL_SECRET_MANUF_PARTITION_DIGEST_0
-    4'b 1111, // index[39] OTP_CTRL_SECRET_MANUF_PARTITION_DIGEST_1
-    4'b 1111, // index[40] OTP_CTRL_SECRET_PROD_PARTITION_0_DIGEST_0
-    4'b 1111, // index[41] OTP_CTRL_SECRET_PROD_PARTITION_0_DIGEST_1
-    4'b 1111, // index[42] OTP_CTRL_SECRET_PROD_PARTITION_1_DIGEST_0
-    4'b 1111, // index[43] OTP_CTRL_SECRET_PROD_PARTITION_1_DIGEST_1
-    4'b 1111, // index[44] OTP_CTRL_SECRET_PROD_PARTITION_2_DIGEST_0
-    4'b 1111, // index[45] OTP_CTRL_SECRET_PROD_PARTITION_2_DIGEST_1
-    4'b 1111, // index[46] OTP_CTRL_SECRET_PROD_PARTITION_3_DIGEST_0
-    4'b 1111, // index[47] OTP_CTRL_SECRET_PROD_PARTITION_3_DIGEST_1
-    4'b 1111, // index[48] OTP_CTRL_SW_MANUF_PARTITION_DIGEST_0
-    4'b 1111, // index[49] OTP_CTRL_SW_MANUF_PARTITION_DIGEST_1
-    4'b 1111, // index[50] OTP_CTRL_SW_PROD_PARTITION_DIGEST_0
-    4'b 1111, // index[51] OTP_CTRL_SW_PROD_PARTITION_DIGEST_1
-    4'b 1111, // index[52] OTP_CTRL_SECRET_LC_UNLOCK_PARTITION_DIGEST_0
-    4'b 1111, // index[53] OTP_CTRL_SECRET_LC_UNLOCK_PARTITION_DIGEST_1
-    4'b 1111, // index[54] OTP_CTRL_SECRET_LC_MANUF_PARTITION_DIGEST_0
-    4'b 1111, // index[55] OTP_CTRL_SECRET_LC_MANUF_PARTITION_DIGEST_1
-    4'b 1111, // index[56] OTP_CTRL_SECRET_LC_PROD_PARTITION_DIGEST_0
-    4'b 1111, // index[57] OTP_CTRL_SECRET_LC_PROD_PARTITION_DIGEST_1
-    4'b 1111, // index[58] OTP_CTRL_SECRET_LC_RMA_PARTITION_DIGEST_0
-    4'b 1111, // index[59] OTP_CTRL_SECRET_LC_RMA_PARTITION_DIGEST_1
-    4'b 1111, // index[60] OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_0
-    4'b 1111  // index[61] OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_1
+    4'b 0001, // index[38] OTP_CTRL_VENDOR_KEYS_MANUF_PARTITION_READ_LOCK
+    4'b 0001, // index[39] OTP_CTRL_VENDOR_KEYS_PROD_PARTITION_READ_LOCK
+    4'b 0001, // index[40] OTP_CTRL_VENDOR_NON_SECRET_PROD_PARTITION_READ_LOCK
+    4'b 1111, // index[41] OTP_CTRL_SECRET_TEST_UNLOCK_PARTITION_DIGEST_0
+    4'b 1111, // index[42] OTP_CTRL_SECRET_TEST_UNLOCK_PARTITION_DIGEST_1
+    4'b 1111, // index[43] OTP_CTRL_SECRET_MANUF_PARTITION_DIGEST_0
+    4'b 1111, // index[44] OTP_CTRL_SECRET_MANUF_PARTITION_DIGEST_1
+    4'b 1111, // index[45] OTP_CTRL_SECRET_PROD_PARTITION_0_DIGEST_0
+    4'b 1111, // index[46] OTP_CTRL_SECRET_PROD_PARTITION_0_DIGEST_1
+    4'b 1111, // index[47] OTP_CTRL_SECRET_PROD_PARTITION_1_DIGEST_0
+    4'b 1111, // index[48] OTP_CTRL_SECRET_PROD_PARTITION_1_DIGEST_1
+    4'b 1111, // index[49] OTP_CTRL_SECRET_PROD_PARTITION_2_DIGEST_0
+    4'b 1111, // index[50] OTP_CTRL_SECRET_PROD_PARTITION_2_DIGEST_1
+    4'b 1111, // index[51] OTP_CTRL_SECRET_PROD_PARTITION_3_DIGEST_0
+    4'b 1111, // index[52] OTP_CTRL_SECRET_PROD_PARTITION_3_DIGEST_1
+    4'b 1111, // index[53] OTP_CTRL_SW_MANUF_PARTITION_DIGEST_0
+    4'b 1111, // index[54] OTP_CTRL_SW_MANUF_PARTITION_DIGEST_1
+    4'b 1111, // index[55] OTP_CTRL_SECRET_LC_TRANSITION_PARTITION_DIGEST_0
+    4'b 1111, // index[56] OTP_CTRL_SECRET_LC_TRANSITION_PARTITION_DIGEST_1
+    4'b 1111, // index[57] OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_0
+    4'b 1111, // index[58] OTP_CTRL_VENDOR_TEST_PARTITION_DIGEST_1
+    4'b 1111, // index[59] OTP_CTRL_VENDOR_KEYS_MANUF_PARTITION_DIGEST_0
+    4'b 1111, // index[60] OTP_CTRL_VENDOR_KEYS_MANUF_PARTITION_DIGEST_1
+    4'b 1111, // index[61] OTP_CTRL_VENDOR_KEYS_PROD_PARTITION_DIGEST_0
+    4'b 1111, // index[62] OTP_CTRL_VENDOR_KEYS_PROD_PARTITION_DIGEST_1
+    4'b 1111, // index[63] OTP_CTRL_VENDOR_SECRET_PROD_PARTITION_DIGEST_0
+    4'b 1111, // index[64] OTP_CTRL_VENDOR_SECRET_PROD_PARTITION_DIGEST_1
+    4'b 1111, // index[65] OTP_CTRL_VENDOR_NON_SECRET_PROD_PARTITION_DIGEST_0
+    4'b 1111  // index[66] OTP_CTRL_VENDOR_NON_SECRET_PROD_PARTITION_DIGEST_1
   };
 
   ///////////////////////////////////////////////
