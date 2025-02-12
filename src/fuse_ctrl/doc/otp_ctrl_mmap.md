@@ -40,6 +40,7 @@ It has been generated with ./util/design/gen-otp-mmap.py
 |         |                                  |            |      32bit       |                                CPTRA_CORE_SOC_MANIFEST_SVN                                |     0x5BC      |     16     |
 |         |                                  |            |      32bit       |                              CPTRA_CORE_SOC_MANIFEST_MAX_SVN                              |     0x5CC      |     1      |
 |    9    |      VENDOR_TEST_PARTITION       |     64     |      32bit       |                                        VENDOR_TEST                                        |     0x5D0      |     32     |
+|         |                                  |            |      64bit       |            [VENDOR_TEST_PARTITION_DIGEST](#Reg_vendor_test_partition_digest_0)            |     0x608      |     8      |
 |   10    |   VENDOR_KEYS_MANUF_PARTITION    |     56     |      32bit       |                                CPTRA_CORE_VENDOR_PK_HASH_0                                |     0x610      |     48     |
 |         |                                  |            |      64bit       |      [VENDOR_KEYS_MANUF_PARTITION_DIGEST](#Reg_vendor_keys_manuf_partition_digest_0)      |     0x640      |     8      |
 |   11    |    VENDOR_KEYS_PROD_PARTITION    |    896     |      32bit       |                                CPTRA_CORE_ECC_REVOCATION_0                                |     0x648      |     1      |

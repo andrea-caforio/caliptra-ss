@@ -13,6 +13,7 @@ It has been generated with ./util/design/gen-otp-mmap.py
 |          [SECRET_PROD_PARTITION_3_DIGEST](#Reg_secret_prod_partition_3_digest_0)          |     SECRET_PROD_PARTITION_3      |        yes         |
 |               [SW_MANUF_PARTITION_DIGEST](#Reg_sw_manuf_partition_digest_0)               |        SW_MANUF_PARTITION        |         no         |
 |   [SECRET_LC_TRANSITION_PARTITION_DIGEST](#Reg_secret_lc_transition_partition_digest_0)   |  SECRET_LC_TRANSITION_PARTITION  |        yes         |
+|            [VENDOR_TEST_PARTITION_DIGEST](#Reg_vendor_test_partition_digest_0)            |      VENDOR_TEST_PARTITION       |         no         |
 |      [VENDOR_KEYS_MANUF_PARTITION_DIGEST](#Reg_vendor_keys_manuf_partition_digest_0)      |   VENDOR_KEYS_MANUF_PARTITION    |         no         |
 |       [VENDOR_KEYS_PROD_PARTITION_DIGEST](#Reg_vendor_keys_prod_partition_digest_0)       |    VENDOR_KEYS_PROD_PARTITION    |         no         |
 |     [VENDOR_SECRET_PROD_PARTITION_DIGEST](#Reg_vendor_secret_prod_partition_digest_0)     |   VENDOR_SECRET_PROD_PARTITION   |        yes         |
